@@ -1,0 +1,6 @@
+# One Facebook group ID or slug per line
+# Lines starting with # are comments
+# Example:
+# memphis-buy-sell
+# memphis-marketplace
+# memphis-deals

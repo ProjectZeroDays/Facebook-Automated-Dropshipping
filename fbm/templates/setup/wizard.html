@@ -1,0 +1,274 @@
+<!doctype html>
+<html data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FBM Ops — Setup Wizard</title>
+<style>
+{% raw %}:root{--bg:#0e1014;--panel:#161a21;--fg:#e6e8eb;--muted:#98a2b3;--border:#262c37;--good:#22c55e;--ok:#f59e0b;--bad:#ef4444;--accent:#60a5fa;--chip:#1c212b}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 system-ui,sans-serif;padding:0}}
+.wrap{{max-width:720px;margin:40px auto;padding:24px}}
+h1{{font-size:22px;margin:0 0 8px;font-weight:600}}
+.sub{{color:var(--muted);font-size:13px;margin-bottom:30px}}
+.card{{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}}
+fieldset{{border:0;padding:0;margin:0}}
+legend{{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;display:block}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}}
+.row{{display:flex;flex-direction:column;gap:6px}}
+label{{font-size:12px;color:var(--muted);font-weight:500}}
+input,select,textarea{{background:#0b0d11;border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:10px 12px;font-size:13px;width:100%}}
+input[type="password"]::placeholder{{color:#5b6572}}
+input:focus,select:focus,textarea:focus{{outline:2px solid var(--accent);border-color:transparent}}
+.hint{{font-size:11px;color:var(--muted);margin-top:4px}}
+.secret-badge{{display:inline-block;background:#3b0e0e;color:#fca5a5;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px}}
+.btn{{background:var(--accent);color:#000;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:inline-block;text-decoration:none;margin-top:16px}}
+.btn:hover{{filter:brightness(1.1)}}
+.btn:disabled{{opacity:0.6;cursor:not-allowed}}
+#status{{margin-top:16px;padding:12px;border-radius:8px;display:none;font-size:13px}}
+#status.success{{background:#163414;color:#86efac;border:1px solid #22c55e}}
+#status.error{{background:#3b0e0e;color:#fca5a5;border:1px solid #ef4444}}
+.progress{{height:4px;background:var(--border);border-radius:2px;margin:8px 0;overflow:hidden}}
+.progress-bar{{height:100%;background:var(--accent);width:0%;transition:width 0.3s}}{% endraw %}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FBM Ops — Setup Wizard</h1>
+  <div class="sub">Configure your autonomous Facebook Marketplace dropshipping platform.</div>
+
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="card">
+    <fieldset>
+      <legend>1. Core Configuration</legend>
+      <div class="grid">
+        <div class="row">
+          <label>Profile directory <span class="secret-badge">secret</span></label>
+          <input id="fbm_profile" placeholder="fb_profile">
+          <div class="hint">Browser profile directory for Facebook login persistence</div>
+        </div>
+        <div class="row">
+          <label>Database path</label>
+          <input id="fbm_db" placeholder="fbm.sqlite">
+          <div class="hint">SQLite database file location</div>
+        </div>
+        <div class="row">
+          <label>Accounts</label>
+          <input id="accounts" placeholder="main">
+          <div class="hint">Comma-separated Facebook account names</div>
+        </div>
+        <div class="row">
+          <label>City</label>
+          <input id="city" placeholder="Memphis">
+          <div class="hint">Your city for tax/shipping profile</div>
+        </div>
+        <div class="row">
+          <label>State</label>
+          <input id="state" placeholder="TN">
+          <div class="hint">Your state for tax nexus</div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="card">
+    <fieldset>
+      <legend>2. Security</legend>
+      <div class="grid">
+        <div class="row">
+          <label>Secret key <span class="secret-badge">secret</span></label>
+          <input id="secret_key" type="password">
+          <div class="hint">Flask session encryption key (auto-generated if empty)</div>
+        </div>
+        <div class="row">
+          <label>CSRF secret <span class="secret-badge">secret</span></label>
+          <input id="csrf_secret" type="password">
+          <div class="hint">CSRF token secret (auto-generated if empty)</div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="card">
+    <fieldset>
+      <legend>3. Facebook Login</legend>
+      <div class="grid">
+        <div class="row">
+          <label>Email</label>
+          <input id="fb_email" type="email">
+          <div class="hint">Facebook account email</div>
+        </div>
+        <div class="row">
+          <label>Password <span class="secret-badge">secret</span></label>
+          <input id="fb_password" type="password">
+          <div class="hint">Facebook account password</div>
+        </div>
+        <div class="row">
+          <label>TOTP secret <span class="secret-badge">secret</span></label>
+          <input id="fb_totp" type="password">
+          <div class="hint">2FA TOTP secret key</div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="card">
+    <fieldset>
+      <legend>4. AI / LLM</legend>
+      <div class="grid">
+        <div class="row">
+          <label>OpenAI API key <span class="secret-badge">secret</span></label>
+          <input id="openai_key" type="password">
+          <div class="hint">OpenAI or OpenRouter API key</div>
+        </div>
+        <div class="row">
+          <label>Base URL</label>
+          <input id="openai_base" value="https://api.openai.com/v1">
+          <div class="hint">LLM API endpoint</div>
+        </div>
+        <div class="row">
+          <label>Model</label>
+          <input id="inbox_model" value="gpt-4o-mini">
+          <div class="hint">Model for inbox AI replies</div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="card">
+    <fieldset>
+      <legend>5. Supplier &amp; Billing API Keys</legend>
+      <div class="grid">
+        <div class="row">
+          <label>Spocket key <span class="secret-badge">secret</span></label>
+          <input id="spocket_key" type="password">
+        </div>
+        <div class="row">
+          <label>CJ key <span class="secret-badge">secret</span></label>
+          <input id="cj_key" type="password">
+        </div>
+        <div class="row">
+          <label>Zendrop key <span class="secret-badge">secret</span></label>
+          <input id="zendrop_key" type="password">
+        </div>
+        <div class="row">
+          <label>DropCommerce key <span class="secret-badge">secret</span></label>
+          <input id="dropcommerce_key" type="password">
+        </div>
+        <div class="row">
+          <label>Stripe secret key <span class="secret-badge">secret</span></label>
+          <input id="stripe_key" type="password">
+          <div class="hint">sk_live or sk_test</div>
+        </div>
+        <div class="row">
+          <label>Stripe webhook secret <span class="secret-badge">secret</span></label>
+          <input id="stripe_webhook" type="password">
+          <div class="hint">whsec_...</div>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="card">
+    <fieldset>
+      <legend>6. Dashboard &amp; Backup</legend>
+      <div class="grid">
+        <div class="row">
+          <label>Admin username</label>
+          <input id="dash_user" value="admin">
+        </div>
+        <div class="row">
+          <label>Admin password <span class="secret-badge">secret</span></label>
+          <input id="dash_pass" type="password">
+        </div>
+        <div class="row">
+          <label>Backup password <span class="secret-badge">secret</span></label>
+          <input id="backup_pass" type="password">
+        </div>
+        <div class="row">
+          <label>Backups to keep</label>
+          <input id="backup_keep" value="7">
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <button class="btn" id="setupBtn">Complete Setup</button>
+  <div id="status"></div>
+</div>
+
+<script>
+const FIELDS = [
+  'fbm_profile','fbm_db','accounts','city','state',
+  'secret_key','csrf_secret',
+  'fb_email','fb_password','fb_totp',
+  'alert_webhook','healthcheck_url',
+  'openai_key','openai_base','inbox_model',
+  'alias_domain',
+  'imap_host','imap_user','imap_pass',
+  'smtp_host','smtp_user','smtp_pass',
+  'spocket_key','cj_key','zendrop_key','dropcommerce_key',
+  'stripe_key','stripe_price_starter','stripe_price_pro','stripe_price_agency','stripe_webhook',
+  'sample_budget','sample_max_cost','sample_address','sample_latency',
+  'dash_user','dash_pass','backup_pass','backup_keep'
+];
+
+function $(id){return document.getElementById(id)}
+
+async function runSetup(){
+  const btn = $('setupBtn');
+  const status = $('status');
+  const bar = $('progressBar');
+
+  const env = {};
+  FIELDS.forEach(f=>{
+    const el = $(f);
+    if(el && el.value) env[f] = el.value;
+  });
+
+  btn.disabled = true;
+  btn.textContent = "Setting up...";
+  status.style.display = 'none';
+
+  try {
+    bar.style.width = '50%';
+    const resp = await fetch('/setup', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(env)
+    });
+    const result = await resp.json();
+
+    bar.style.width = '100%';
+    if (result.status === 'success') {
+      status.className = 'success';
+      status.textContent = 'Setup complete! Redirecting...';
+      status.style.display = 'block';
+      setTimeout(() => { window.location.href = '/'; }, 1500);
+    } else {
+      status.className = 'error';
+      status.textContent = 'Error: ' + (result.message || 'Unknown error');
+      status.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Retry Setup';
+    }
+  } catch (e) {
+    status.className = 'error';
+    status.textContent = 'Network error: ' + e.message;
+    status.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Retry Setup';
+  }
+}
+
+$('setupBtn').addEventListener('click', runSetup);
+
+// Check setup status on load
+fetch('/setup/status').then(r=>r.json()).then(d=>{
+  if (!d.setup_required) {
+    window.location.href = '/';
+  }
+});
+</script>
+</body>
+</html>

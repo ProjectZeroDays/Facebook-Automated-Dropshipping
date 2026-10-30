@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card, badge, status_badge, table, field %}
+{% from "_ui.html" import tabs, progress, alert, sparkline, kv %}
+{% block title %}Products{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="page-head">
+  <div><h1>Products</h1><p class="sub">Your active SKUs, margins, and suppliers.</p></div>
+  <div class="row">
+    <button class="btn p" data-modal="#importModal">Import CSV</button>
+    <button class="btn sm ghost">Export</button>
+  </div>
+</div>
+
+<div class="grid grid-4 mt-3">
+  {{ kpi('Active SKUs', '20', '+3 this week', 'up') }}
+  {{ kpi('Live listings', '20', '0 pending', 'up') }}
+  {{ kpi('Avg margin', '55.5%', '+4.2%', 'up') }}
+  {{ kpi('Low margin', '2', 'Needs review', 'down') }}
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Active SKUs</strong>
+    <span class="sub">20 products across 6 categories</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>SKU</th><th>Product</th><th class="n">Cost</th><th class="n">Price</th><th class="n">Margin</th><th>Source</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">PHR-01</td>
+          <td><strong>Pet Hair Remover Roller</strong><div class="sub">Pet hair remover for couch, carpet & bedding</div></td>
+          <td class="mono">$7.00</td>
+          <td class="mono">$27.99</td>
+          <td class="mono good">62.0%</td>
+          <td><span class="badge badge--accent">Spocket</span></td>
+          <td>{{ status_badge('listed') }}</td>
+          <td class="ta-r"><button class="btn sm ghost" data-modal="#editProductModal">Edit</button></td>
+        </tr>
+        <tr>
+          <td class="mono">POS-02</td>
+          <td><strong>Posture Corrector</strong><div class="sub">Adjustable back brace for men & women</div></td>
+          <td class="mono">$9.00</td>
+          <td class="mono">$34.99</td>
+          <td class="mono good">61.0%</td>
+          <td><span class="badge badge--accent">AutoDS US</span></td>
+          <td>{{ status_badge('listed') }}</td>
+          <td class="ta-r"><button class="btn sm ghost" data-modal="#editProductModal">Edit</button></td>
+        </tr>
+        <tr>
+          <td class="mono">SFD-03</td>
+          <td><strong>Slow Feeder Dog Bowl</strong><div class="sub">Anti-gulp maze bowl for fast eaters</div></td>
+          <td class="mono">$8.00</td>
+          <td class="mono">$29.99</td>
+          <td class="mono good">60.0%</td>
+          <td><span class="badge badge--accent">Zendrop</span></td>
+          <td>{{ status_badge('listed') }}</td>
+          <td class="ta-r"><button class="btn sm ghost" data-modal="#editProductModal">Edit</button></td>
+        </tr>
+        <tr>
+          <td class="mono">HCS-04</td>
+          <td><strong>Heatless Curling Set</strong><div class="sub">Overnight curls without heat damage</div></td>
+          <td class="mono">$8.00</td>
+          <td class="mono">$29.99</td>
+          <td class="mono good">60.0%</td>
+          <td><span class="badge badge--accent">Spocket</span></td>
+          <td>{{ status_badge('listed') }}</td>
+          <td class="ta-r"><button class="btn sm ghost" data-modal="#editProductModal">Edit</button></td>
+        </tr>
+        <tr>
+          <td class="mono">RBS-05</td>
+          <td><strong>Resistance Band Set</strong><div class="sub">5-piece with door anchor & handles</div></td>
+          <td class="mono">$12.00</td>
+          <td class="mono">$39.99</td>
+          <td class="mono good">55.0%</td>
+          <td><span class="badge badge--accent">Spocket</span></td>
+          <td>{{ status_badge('listed') }}</td>
+          <td class="ta-r"><button class="btn sm ghost" data-modal="#editProductModal">Edit</button></td>
+        </tr>
+        <tr>
+          <td class="mono">MPJ-20</td>
+          <td><strong>Mini Projector 1080p</strong><div class="sub">Portable home theater projector</div></td>
+          <td class="mono">$45.00</td>
+          <td class="mono">$109.99</td>
+          <td class="mono good">46.0%</td>
+          <td><span class="badge badge--accent">CJdropship</span></td>
+          <td>{{ status_badge('listed') }}</td>
+          <td class="ta-r"><button class="btn sm ghost" data-modal="#editProductModal">Edit</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Margin distribution</strong></div>
+  <div class="card-b">
+    <svg width="400" height="100" viewBox="0 0 400 100" class="spark-wrap">
+      {{ sparkline([62, 61, 60, 60, 55, 46, 52, 58, 51, 48], 'accent', 400, 100) }}
+    </svg>
+    <div class="sub mt-2">Margins across active SKUs. Target: &ge;35%. Anything below is flagged for review.</div>
+  </div>
+</div>
+{% endblock %}

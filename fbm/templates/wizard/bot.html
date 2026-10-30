@@ -1,0 +1,20 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>Your support bot</h2>
+<p class="d">Replies in seconds, 24/7. You approve anything risky.</p>
+<label>Support number for buyers</label>
+<input name="phone" placeholder="(901) 555-0134">
+<label>Tone</label>
+<select name="tone"><option>friendly-short</option><option>professional</option><option>casual</option></select>
+<label>When a message is off-topic</label>
+<select name="off_topic_action">
+  <option value="minimal">Reply with just “?” (human-like)</option>
+  <option value="silent">Stay silent</option>
+  <option value="canned">Send a canned line</option>
+</select>
+<label>Returns</label>
+<select name="returns"><option>yes 30 days</option><option>yes 14 days</option><option>no</option></select>
+<label>Who pays shipping?</label>
+<select name="shipping_payer">
+  <option>Meta/FB pricing</option><option>my supplier's estimate</option>
+</select>
+{% endblock %}

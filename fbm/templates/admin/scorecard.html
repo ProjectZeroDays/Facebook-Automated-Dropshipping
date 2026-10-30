@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card, badge, table %}
+{% block title %}Scorecard{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Churn Scorecard</h2>
+<div class="d" style="margin-bottom:18px">Tenant risk bands and intervention recommendations.</div>
+
+<div class="grid grid-4 mt-3">
+  {{ kpi('At-risk tenants', '3', '2 stable', 'down') }}
+  {{ kpi('Avg health score', '78/100', '+5 this month', 'up') }}
+  {{ kpi('Interventions sent', '14', '8 converted', 'up') }}
+  {{ kpi('MRR at risk', '$297', '$0 recovered', 'down') }}
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Tenant health overview</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Tenant</th><th>Plan</th><th>Health</th><th>Listings</th><th>Orders (30d)</th><th>Last login</th><th>Risk</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Memphis reseller</strong></td>
+          <td>Pro</td>
+          <td>{{ badge('healthy', 'success') }}</td>
+          <td class="mono">128</td>
+          <td class="mono">41</td>
+          <td class="sub">2 hours ago</td>
+          <td class="ta-r">Low</td>
+          <td class="ta-r"><button class="btn sm ghost">View</button></td>
+        </tr>
+        <tr>
+          <td><strong>Nashville trader</strong></td>
+          <td>Starter</td>
+          <td>{{ badge('at-risk', 'warn') }}</td>
+          <td class="mono">12</td>
+          <td class="mono">3</td>
+          <td class="sub">11 days ago</td>
+          <td class="ta-r">Medium</td>
+          <td class="ta-r"><button class="btn sm ghost">View</button></td>
+        </tr>
+        <tr>
+          <td><strong>Atlanta flipper</strong></td>
+          <td>Pro</td>
+          <td>{{ badge('critical', 'danger') }}</td>
+          <td class="mono">0</td>
+          <td class="mono">0</td>
+          <td class="sub">29 days ago</td>
+          <td class="ta-r">High</td>
+          <td class="ta-r"><button class="btn sm ghost">View</button></td>
+        </tr>
+        <tr>
+          <td><strong>Birmingham reseller</strong></td>
+          <td>Starter</td>
+          <td>{{ badge('healthy', 'success') }}</td>
+          <td class="mono">45</td>
+          <td class="mono">18</td>
+          <td class="sub">1 day ago</td>
+          <td class="ta-r">Low</td>
+          <td class="ta-r"><button class="btn sm ghost">View</button></td>
+        </tr>
+        <tr>
+          <td><strong>Charlotte seller</strong></td>
+          <td>Starter</td>
+          <td>{{ badge('at-risk', 'warn') }}</td>
+          <td class="mono">8</td>
+          <td class="mono">1</td>
+          <td class="sub">18 days ago</td>
+          <td class="ta-r">Medium</td>
+          <td class="ta-r"><button class="btn sm ghost">View</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Recommended interventions</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Tenant</th><th>Reason</th><th>Suggested action</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Atlanta flipper</strong></td>
+          <td>No activity for 29 days</td>
+          <td>Send win-back email + $25 credit</td>
+          <td>{{ badge('pending', 'warn') }}</td>
+        </tr>
+        <tr>
+          <td><strong>Nashville trader</strong></td>
+          <td>Listings at cap, low conversion</td>
+          <td>Suggest Pro upgrade</td>
+          <td>{{ badge('sent', 'success') }}</td>
+        </tr>
+        <tr>
+          <td><strong>Charlotte seller</strong></td>
+          <td>No orders in 18 days</td>
+          <td>Offer comp credit + onboarding call</td>
+          <td>{{ badge('pending', 'warn') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

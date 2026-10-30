@@ -1,0 +1,71 @@
+{% macro kpi(label, value, delta=None, tone='up') %}
+<div class="kpi"><div class="k">{{ label }}</div><div class="v">{{ value }}</div>
+{% if delta %}<div class="d {{ tone }}">{{ delta }}</div>{% endif %}</div>
+{% endmacro %}
+
+{% macro card(title=None, badge=None) %}
+<div class="card">
+  {% if title or badge %}<div class="card-h">{% if title %}<strong>{{ title }}</strong>{% endif %}{% if badge %}{{ badge }}{% endif %}</div>{% endif %}
+  <div class="card-b">
+  {{ caller() if caller is defined else '' }}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro empty(title, body, cta=None, href=None) %}
+<div class="empty">
+  <h3>{{ title }}</h3>
+  <p class="sub">{{ body }}</p>
+  {% if cta and href %}<a class="btn btn--primary" href="{{ href }}">{{ cta }}</a>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro badge(text, tone='accent') %}
+<span class="badge badge--{{ tone }}">{{ text }}</span>
+{% endmacro %}
+
+{% macro status_badge(state) %}
+{% set map = {'listed':'success','sold':'info','shipped':'success','failed':'danger','pending':'warn','healthy':'success','connected':'success','off':'warn','active':'success','trialing':'warn'} %}
+<span class="badge badge--{{ map.get(state,'info') }}">{{ state }}</span>
+{% endmacro %}
+
+{% macro tip(text) %}
+<span class="tip"><button class="btn btn--ghost btn--icon">?</button><span class="bub">{{ text }}</span></span>
+{% endmacro %}
+
+{% macro field(name, label, value='', type='text', hint=None, prefix=None, suffix=None, mono=False, state=None, options=None, min=None, max=None, step=None, placeholder=None) %}
+<div class="field {% if state %}is-{{ state }}{% endif %}">
+  <label class="lbl" for="{{ name }}">{{ label }}</label>
+  {% if type == 'select' %}
+  <select class="inp" id="{{ name }}" name="{{ name }}">
+    {% for o in (options or []) %}<option value="{{ o }}" {% if o == value %}selected{% endif %}>{{ o }}</option>{% endfor %}
+  </select>
+  {% elif type == 'textarea' %}
+  <textarea class="inp" id="{{ name }}" name="{{ name }}" placeholder="{{ placeholder }}">{{ value }}</textarea>
+  {% else %}
+  <div class="igroup">
+    {% if prefix %}<span class="affix">{{ prefix }}</span>{% endif %}
+    <input class="inp {% if mono %}mono{% endif %}" id="{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ value }}"{% if min %} min="{{ min }}"{% endif %}{% if max %} max="{{ max }}"{% endif %}{% if step %} step="{{ step }}"{% endif %}{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}>
+    {% if suffix %}<span class="affix">{{ suffix }}</span>{% endif %}
+  </div>
+  {% endif %}
+  {% if hint %}<div class="hint">{{ hint }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro toggle(name, checked=False, label=None) %}
+<label class="check"><input type="checkbox" name="{{ name }}" {% if checked %}checked{% endif %}><span class="sw"></span>{% if label %} {{ label }}{% endif %}</label>
+{% endmacro %}
+
+{% macro table(headers, sortable=False) %}
+<table class="tbl">
+  <thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+  <tbody>
+  {{ caller() if caller is defined else '' }}
+  </tbody>
+</table>
+{% endmacro %}
+
+{% macro skeleton(n=3) %}
+<div class="skel">{% for i in range(n) %}<div class="skel-row"></div>{% endfor %}</div>
+{% endmacro %}

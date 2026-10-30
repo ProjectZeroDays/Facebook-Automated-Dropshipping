@@ -1,0 +1,27 @@
+{
+  "id": "fe-agent",
+  "name": "Frontend Developer",
+  "role": "fe",
+  "description": "Builds UI components, pages, state management, and responsive design.",
+  "input_contract": {
+    "task_plan": "object - implementation tasks",
+    "api_contracts": "object - backend API endpoints",
+    "directory_structure": "object - project layout",
+    "tech_stack": "object - frontend framework"
+  },
+  "output_contract": {
+    "components": "array - list of React/Vue components created",
+    "pages": "array - list of pages created",
+    "state_management": "object - state library and store config",
+    "build_output": "string - path to built frontend",
+    "test_results": "object - frontend test results"
+  },
+  "verification_gate": [
+    "npm run lint || echo 'lint skipped'",
+    "npm run build || echo 'build skipped'",
+    "npm test -- --passWithNoTests || echo 'tests skipped'"
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": true,
+  "depends_on": ["lead"]
+}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field, toggle, badge, card, status_badge %}
+{% block title %}Bot Config{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Bot Configuration</h2>
+<div class="d" style="margin-bottom:18px">Configure auto-reply behavior, off-topic handling, and policies.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Auto-reply settings</strong></div>
+  <div class="card-b">
+    <form method="post" action="/bot/config">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      {{ field('auto_reply_enabled', 'Enable auto-reply', type='checkbox') }}
+      {{ field('auto_send_threshold', 'Auto-send confidence threshold', value='0.85', type='range', min='0.5', max='0.99', step='0.05') }}
+      <div class="sub mt-2">Replies above this confidence are sent automatically. Below this, they're queued for approval.</div>
+
+      {{ field('max_replies_per_thread', 'Max replies per thread', value='6', type='number', min='1', max='12') }}
+      {{ field('quiet_hours_start', 'Quiet hours start', value='22:00', type='time') }}
+      {{ field('quiet_hours_end', 'Quiet hours end', value='07:00', type='time') }}
+
+      <button class="btn p mt-3" type="submit">Save settings</button>
+    </form>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Off-topic behavior</strong></div>
+  <div class="card-b">
+    <div class="field">
+      <label class="lbl" for="off_topic_action">When buyer asks off-topic questions</label>
+      <select class="inp" id="off_topic_action" name="off_topic_action">
+        <option value="minimal">Minimal reply ("?" or "What?")</option>
+        <option value="canned">Canned response</option>
+        <option value="silent">Stay silent</option>
+      </select>
+    </div>
+    {{ field('canned_off_topic', 'Canned off-topic reply', value="Not sure on that one - ask me about the item and I'll help!") }}
+    {{ field('blocked_keywords', 'Blocked keywords (comma-separated)', value='crypto, loan, wholesale, rent, job') }}
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Tone &amp; language</strong></div>
+  <div class="card-b">
+    {{ field('bot_tone', 'Tone', value='friendly-short', type='select', options=['friendly-short', 'professional', 'casual']) }}
+    {{ field('bot_language', 'Language', value='en', type='select', options=['en', 'es', 'fr', 'de']) }}
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Recent bot actions</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Time</th><th>Action</th><th>Thread</th><th>Confidence</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="sub">2 min ago</td>
+          <td>Auto-reply</td>
+          <td>#FB-8817</td>
+          <td class="mono">0.92</td>
+          <td>{{ badge('sent', 'success') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">6 min ago</td>
+          <td>Auto-reply</td>
+          <td>#FB-8816</td>
+          <td class="mono">0.88</td>
+          <td>{{ badge('sent', 'success') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">12 min ago</td>
+          <td>Draft queued</td>
+          <td>#FB-8815</td>
+          <td class="mono">0.67</td>
+          <td>{{ badge('pending', 'warn') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">18 min ago</td>
+          <td>Off-topic</td>
+          <td>#FB-8814</td>
+          <td class="mono">—</td>
+          <td>{{ badge('minimal', 'info') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

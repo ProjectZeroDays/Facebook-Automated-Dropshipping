@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card, badge, status_badge, table %}
+{% from "_ui.html" import alert, progress, kv, tabs %}
+{% block title %}Admin Console{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Admin Console</h2>
+<div class="d" style="margin-bottom:18px">Global controls, tenant management, and system health.</div>
+
+{% if session.get('admin') %}
+{{ alert('info', 'Admin mode active', 'You are operating with global administrative privileges.') }}
+{% endif %}
+
+<div class="grid grid-4 mt-3">
+  {{ kpi('Tenants', '12', '+2 this month', 'up') }}
+  {{ kpi('Active subscriptions', '8', '+1 this week', 'up') }}
+  {{ kpi('Pending webhooks', '0', 'All delivered', 'up') }}
+  {{ kpi('System health', '100%', 'All systems normal', 'up') }}
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Global feature flags</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Flag</th><th>Value</th><th>Description</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>trial_enabled</strong></td>
+          <td class="mono">true</td>
+          <td class="sub">Allow new trial signups</td>
+          <td class="ta-r"><label class="check"><input type="checkbox" checked><span class="sw"></span></label></td>
+        </tr>
+        <tr>
+          <td><strong>maintenance_mode</strong></td>
+          <td class="mono">false</td>
+          <td class="sub">Pause all Facebook writes</td>
+          <td class="ta-r"><label class="check"><input type="checkbox"><span class="sw"></span></label></td>
+        </tr>
+        <tr>
+          <td><strong>signups_open</strong></td>
+          <td class="mono">true</td>
+          <td class="sub">Accept new accounts</td>
+          <td class="ta-r"><label class="check"><input type="checkbox" checked><span class="sw"></span></label></td>
+        </tr>
+        <tr>
+          <td><strong>referral_two_sided</strong></td>
+          <td class="mono">true</td>
+          <td class="sub">Both referrer and referee rewarded</td>
+          <td class="ta-r"><label class="check"><input type="checkbox" checked><span class="sw"></span></label></td>
+        </tr>
+        <tr>
+          <td><strong>gmv_fee_enabled</strong></td>
+          <td class="mono">false</td>
+          <td class="sub">Charge % of GMV in addition</td>
+          <td class="ta-r"><label class="check"><input type="checkbox"><span class="sw"></span></label></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Recent admin actions</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="sub">2 min ago</td>
+          <td>admin@fbm.local</td>
+          <td>Flag change</td>
+          <td>trial_enabled → true</td>
+          <td>{{ badge('success') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">14 min ago</td>
+          <td>admin@fbm.local</td>
+          <td>Tenant comp</td>
+          <td>acme_reseller (+$25 credit)</td>
+          <td>{{ badge('success') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">2 hours ago</td>
+          <td>admin@fbm.local</td>
+          <td>Plan override</td>
+          <td>global_trader → Agency</td>
+          <td>{{ badge('success') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">5 hours ago</td>
+          <td>admin@fbm.local</td>
+          <td>Kill switch</td>
+          <td>readonly_mode → true (12 min)</td>
+          <td>{{ badge('warn') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="grid grid-2 mt-3">
+  {% call card('Quick actions') %}
+    <div class="row mt-2">
+      <button class="btn p" data-post="/admin/flags" data-json='{"maintenance_mode": true}'>Enable maintenance mode</button>
+      <button class="btn sm ghost" data-post="/admin/killswitch">Emergency kill switch</button>
+    </div>
+    <div class="row mt-2">
+      <button class="btn sm ghost" data-post="/admin/flags" data-json='{"signups_open": false}'>Pause signups</button>
+      <button class="btn sm ghost" data-post="/admin/flags" data-json='{"signups_open": true}'>Enable signups</button>
+    </div>
+  {% endcall %}
+  {% call card('System status') %}
+    <div class="row mt-2">
+      <div><strong>Database</strong></div>
+      <div class="ta-r">{{ badge('connected', 'success') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div><strong>Redis cache</strong></div>
+      <div class="ta-r">{{ badge('connected', 'success') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div><strong>Facebook automation</strong></div>
+      <div class="ta-r">{{ badge('active', 'success') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div><strong>Last backup</strong></div>
+      <div class="ta-r sub">2 hours ago</div>
+    </div>
+  {% endcall %}
+</div>
+{% endblock %}

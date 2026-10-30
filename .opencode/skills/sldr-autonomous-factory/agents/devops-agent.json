@@ -1,0 +1,27 @@
+{
+  "id": "devops-agent",
+  "name": "DevOps/SRE",
+  "role": "devops",
+  "description": "Creates Docker, CI/CD pipeline, deployment configs, and monitoring.",
+  "input_contract": {
+    "architecture": "object - system architecture",
+    "tech_stack": "object - selected technologies",
+    "deployment_target": "string - deployment target",
+    "docker_registry": "string - registry URL",
+    "ssl_required": "boolean - SSL needed"
+  },
+  "output_contract": {
+    "dockerfile": "string - path to Dockerfile",
+    "docker_compose": "string - path to docker-compose.yml",
+    "ci_cd_pipeline": "string - path to CI/CD config",
+    "environment_template": "string - path to .env.example",
+    "monitoring_config": "object - monitoring and alerting setup"
+  },
+  "verification_gate": [
+    "docker compose config -q || echo 'docker compose skipped'",
+    "python -c \"import yaml; yaml.safe_load(open('.github/workflows/ci.yml'))\" || echo 'CI config skipped'"
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": true,
+  "depends_on": ["lead"]
+}

@@ -1,0 +1,18 @@
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<style>
+.aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:radial-gradient(120% 120% at 20% 10%,#0b1020,#05070d 62%)}
+html[data-theme=light] .aurora{background:radial-gradient(120% 120% at 20% 10%,#eef2ff,#f8fafc 62%)}
+.aurora i{position:absolute;width:46vw;height:46vw;border-radius:50%;filter:blur(72px);opacity:.5;
+  mix-blend-mode:screen;animation:drift 22s ease-in-out infinite alternate}
+html[data-theme=light] .aurora i{mix-blend-mode:multiply;opacity:.35}
+.aurora i:nth-child(1){background:#3b82f6;top:-12%;left:-8%}
+.aurora i:nth-child(2){background:#22c55e;bottom:-16%;right:-10%;animation-delay:-5s}
+.aurora i:nth-child(3){background:#8b5cf6;top:24%;right:6%;animation-delay:-11s}
+.aurora i:nth-child(4){background:#06b6d4;bottom:8%;left:12%;animation-delay:-16s}
+.aurora i:nth-child(5){background:#f59e0b;top:52%;left:44%;animation-delay:-20s;opacity:.32}
+@keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(6vw,-4vh,0) scale(1.15)}
+  100%{transform:translate3d(-5vw,5vh,0) scale(1.05)}}
+@media(prefers-reduced-motion:reduce){.aurora i{animation:none}}
+</style>

@@ -1,0 +1,235 @@
+fbm-ops/
+├── README.md                              ⬜  quickstart, screenshots, positioning
+├── LICENSE                                ⬜  commercial or BSL
+├── CHANGELOG.md                           ⬜  Keep-a-Changelog; feeds /changelog
+├── SECURITY.md                            ⬜  disclosure policy + encryption notes
+├── PRIVACY.md                             ⬜  what's collected, retention, subprocessors
+├── TERMS.md                               ⬜  subscription terms, fair use
+├── .gitignore                             ⬜  data/, profiles/, .env, *.sqlite
+├── .env.example                           🟡  referenced throughout, never written
+├── Makefile                               ✅  dev + admin + ops targets
+├── .pre-commit-config.yaml                ✅  ruff, hooks, module smoke, pytest-fast
+├── pyproject.toml                         ✅  packaging, scripts, ruff/pytest config
+├── requirements.txt                       ✅  pinned deps
+├── Dockerfile                             ✅  playwright base + xvfb + x11vnc
+├── docker-compose.yml                     ✅  worker + dashboard
+├── docker-compose.override.yml            ✅  dev: vnc, prometheus, grafana
+├── entrypoint.sh                          ✅  xvfb, vnc, worker|dashboard|once
+├── crontab                                ✅  in-container schedule
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml                         ✅  lint, smoke, pytest, coverage floor
+│
+├── docs/
+│   ├── architecture.md                    ✅  data flow, trust boundaries, failure domains
+│   ├── runbook.md                         ✅  ops + §10 admin playbooks
+│   ├── compliance.md                      ✅  TN LLC, business tax, 1099-K
+│   ├── returns.md                         🟡  RMA + message tree outline
+│   ├── email-copy.md                      ⬜  day 0/2/3/4/5/10/14 full copy + A/B
+│   ├── security.md                        ⬜  threat model, key rotation, recovery ladder
+│   ├── api.md                             ⬜  if you expose the Agency API
+│   └── deployment.md                      ⬜  VPS, TLS, RP_ID/ORIGIN, backups
+│
+├── ops/
+│   ├── prometheus.yml                     ✅  scrape config
+│   └── grafana/
+│       └── provisioning/
+│           ├── datasources/ds.yml         ✅
+│           ├── dashboards/dash.yml        ✅
+│           ├── dashboards/fbm.json        ✅  8 panels
+│           └── alerting/
+│               ├── rules.yml              ✅  overdue, stale, spike, zero-listings
+│               └── contactpoints.yml      ✅  webhook
+│
+├── migrations/
+│   ├── 001_core.sql                       ✅  full schema (in fbm/schema.sql)
+│   ├── 002_auth.sql                       🟡  passkeys/totp/resets — inline ALTERs
+│   ├── 003_billing.sql                    🟡  subs/credits/referrals/webhooks — inline
+│   ├── 004_ops.sql                        🟡  drip/interventions/email_events — inline
+│   └── runner.py                          ⬜  ordered, idempotent, tracked in _migrations
+│
+├── scripts/
+│   ├── dev.sh                             ⬜  run worker+dash+vnc locally
+│   ├── seed_demo.sh                       ⬜  fake tenant + orders for screenshots
+│   └── restore_drill.sh                   ⬜  quarterly recovery test
+│
+├── tests/
+│   ├── conftest.py                        ✅  tmp DB/env fixture + path shim
+│   ├── fakes.py                           ✅  FakePage/FakeLocator
+│   ├── test_tracking.py                   ✅
+│   ├── test_econ.py                       ✅
+│   ├── test_validate.py                   ✅
+│   ├── test_accounts.py                   ✅
+│   ├── test_rate.py                       ✅
+│   ├── test_lock.py                       ✅
+│   ├── test_tax.py                        ✅
+│   ├── test_scraper_parse.py              ✅
+│   ├── test_samples.py                    ✅
+│   ├── test_session_guard.py              ✅
+│   ├── test_inbox_ai.py                   ✅
+│   ├── test_auth.py                       ⬜  passkey/pw/totp/reset
+│   ├── test_webhooks.py                   ⬜  dedupe, replay, sweep
+│   ├── test_credits.py                    ⬜  two-sided, caps, expiry, clawback
+│   ├── test_accountdata.py                ⬜  export/delete/purge
+│   ├── test_regions.py                    ⬜  all 56 jurisdictions resolve
+│   └── test_scorecard.py                  ⬜  risk bands
+│
+├── fbm/
+│   ├── __init__.py                        ✅  lazy submodule loader
+│   ├── _compat.py                         ✅  legacy flat-import shim
+│   ├── schema.sql                         ✅  all tables
+│   │
+│   ├── core.py                            ✅  env, lock, rate, selectors, session, alerts
+│   ├── regions.py                         ✅  states + territories + tax profile
+│   ├── config.py                          ✅  region/mode/fee, CLI
+│   ├── flags.py                           ✅  global + per-tenant flags, kill switches
+│   ├── credits.py                         ✅  ledger, referral, guards, clawback
+│   ├── vault.py                           ✅  per-tenant Fernet secrets
+│   │
+│   ├── auth.py                            ✅  passkeys, scrypt, TOTP, resets, step-up, audit
+│   ├── rp.py                              ✅  RP_ID/ORIGIN resolution + diagnose
+│   ├── totp.py                            ✅  secret, QR, recovery codes
+│   ├── authroutes.py                      ✅  all auth endpoints
+│   ├── onboarding.py                      🟡  apply_answers referenced, partial
+│   │
+│   ├── billing.py                         ✅  plans, checkout, wallets, verify, activate
+│   ├── payments.py                        ✅  Apple/Google/Venmo, Connect links
+│   ├── webhooks.py                        ✅  verify, dedupe, dispatch, replay, sweep
+│   ├── signup.py                          ✅  signup → Stripe → finish
+│   ├── credits.py                         ✅  (above)
+│   │
+│   ├── integrations.py                    ✅  registry, connect, save/remove/verify
+│   ├── oauth.py                           ✅  loopback PKCE + callback server
+│   ├── google.py                          ✅  Gmail, Calendar, Voice
+│   ├── vendors.py                         ✅  10 vetted vendors, ratings, contacts
+│   │
+│   ├── llm.py                             ✅  tiers, sidecar, grounded escalation, VLM
+│   ├── chatbot.py                         ✅  app-aware assistant, uploads
+│   ├── actions.py                         ✅  tool registry, maybe_run
+│   ├── whisper.py                         ✅  local transcription fallback
+│   ├── download_model.py                  ✅  GGUF fetcher
+│   ├── bootstrap.py                       ✅  schema + models + tenant
+│   │
+│   ├── bot.py                             ✅  list / renew / recycle
+│   ├── login_once.py                      ✅  login + calibrate
+│   ├── scraper.py                         ✅  comps → SQLite
+│   ├── targets.py                         ✅  robust stats + margin floor
+│   ├── reprice.py                         ✅  >15% auto-reprice
+│   ├── groups.py                          ✅  group posting
+│   ├── crosslist.py                       ✅  fee-aware queue
+│   ├── crosslist_post.py                  ✅  eBay/OfferUp/Nextdoor posters
+│   ├── copygen.py                         ✅  LLM copy + variants
+│   ├── validate.py                        ✅  brand/length/dup checks + fix
+│   ├── accounts.py                        ✅  multi-account + photo variation
+│   ├── suppliers.py                       ✅  primary/backup failover + RMA
+│   ├── tracking.py                        ✅  ingest/match/FB upload + alias routing
+│   ├── email_ingest.py                    ✅  IMAP poller
+│   ├── inbox.py                           ✅  Messenger poller
+│   ├── inbox_ai.py                        ✅  LLM drafts + confidence gate
+│   ├── returns.py                         ✅  intent tree + RMA
+│   ├── samples.py                         ✅  auto sample + latency gate
+│   ├── insights.py                        ✅  views/saves scraper
+│   ├── session_guard.py                   ✅  auto-relogin + TOTP
+│   ├── profile_backup.py                  ✅  encrypted backup/restore
+│   ├── selfheal.py                        ✅  signature → auto-fix
+│   ├── bugreport.py                       ✅  diagnostics bundle
+│   ├── updater.py                         ✅  check/apply/rollback
+│   ├── metrics.py                         ✅  Prometheus exporter
+│   ├── deadman.py                         ✅  healthchecks + strikes
+│   ├── autovars.py                        🟡  check table spec'd, not written
+│   ├── tax.py                             ✅  P&L + 1099-K, region-aware
+│   │
+│   ├── dashboard.py                       ✅  console, /metrics, /ingest, SSE
+│   ├── firstrun.py                        ✅  self-observing checklist
+│   ├── drip.py                            ✅  milestone emails
+│   ├── onboarding_emails.py               ✅  day 0–14 sequence, state-aware
+│   ├── emailcopy.py                       🟡  A/B variant + promote, copy inline
+│   ├── emailtrack.py                      ✅  pixel, click wrap, variant stats
+│   ├── scorecard.py                       ✅  churn risk
+│   ├── interventions.py                   ✅  nudge log + attribution
+│   ├── accountdata.py                     ✅  export, selective wipe, delete+grace
+│   │
+│   ├── adminroutes.py                     ✅  webhooks, tenants, drip, ab
+│   ├── tenants.py                         ✅  impersonate, comp, gate, rotate, export
+│   │
+│   ├── bot_rules.py                       ✅  editable rules + hard limits
+│   ├── settings.py                        ✅  business profile, CSV import, presets
+│   │
+│   ├── static/
+│   │   ├── webauthn.js                    ✅  passkey ceremony
+│   │   ├── ui.css                         ⬜  design tokens + components
+│   │   ├── app.js                         ⬜  toasts, modals, ⌘K, tables
+│   │   ├── ping.mp3                       ⬜  alert sound
+│   │   └── icons/                         ⬜  favicon, PWA icons, OG image
+│   │
+│   └── templates/
+│       ├── base.html                      ✅  shell + bg + chat + impersonation banner
+│       ├── _bg.html                       ✅  animated aurora
+│       ├── _chat.html                     ✅  assistant widget
+│       ├── _toast.html                    ⬜  toast container
+│       ├── _macros.html                   ⬜  empty state, card, table, badge
+│       ├── index.html                     ✅  dashboard stub
+│       ├── first_run.html                 ✅  live checklist
+│       ├── signup.html                    🟡  referenced
+│       ├── billing.html                   ⬜  plan picker
+│       ├── billing_ok.html / _no.html     ⬜
+│       ├── products.html                  ⬜  listings + margins
+│       ├── orders.html                    ⬜  orders + tracking
+│       ├── reports.html                   ⬜  charts
+│       ├── bot.html                       ⬜  bot config
+│       ├── help.html                      ⬜  tutorials + troubleshooting
+│       ├── refer.html                     🟡  designed, not written
+│       ├── vendors.html                   🟡  directory page
+│       ├── wizard/
+│       │   ├── _layout.html               ✅  progress rail
+│       │   ├── welcome.html               ✅
+│       │   ├── plan.html                  ✅
+│       │   ├── region.html                ✅  + preview fix
+│       │   ├── mode.html                  ✅
+│       │   ├── vendor.html                ✅
+│       │   ├── niches.html                ✅
+│       │   ├── review.html                ✅
+│       │   ├── facebook.html              ✅
+│       │   └── bot.html                   ✅
+│       ├── settings/
+│       │   ├── security.html              ✅  passkeys + TOTP + reset
+│       │   ├── data.html                  ✅  export/delete/purge
+│       │   ├── integrations.html          ✅  add/edit/remove/verify
+│       │   ├── notifications.html         ⬜  sound, channels, quiet hours
+│       │   └── account.html               ⬜  profile, plan, team, danger
+│       ├── auth/
+│       │   ├── totp.html                  ✅  QR + recovery codes
+│       │   ├── login.html                 ⬜
+│       │   └── reset.html                 ⬜
+│       └── admin/
+│           ├── webhooks.html              ✅  list, filter, replay
+│           ├── drip.html                  ✅
+│           ├── drip_ab.html               ✅  variant stats + promote
+│           ├── tenants.html               ✅
+│           ├── tenant.html                🟡  detail spec'd, not written
+│           ├── scorecard.html             ✅  churn risk
+│           └── interventions.html         ⬜  effectiveness report
+│
+└── data/                                  (runtime, gitignored)
+    ├── fbm.sqlite                         ✅
+    ├── fbm_state.json                     ✅
+    ├── selectors.json                     ✅
+    ├── vault.key                          ✅
+    ├── models/                            ✅  GGUF + mmproj + whisper
+    ├── backups/                           ✅
+    ├── chat_uploads/                      ✅
+    ├── fb_profile/                        ✅  + profiles/int_*, profiles/ebay|offerup|nextdoor
+    ├── imgs/variants/                     ✅
+    ├── dashboard.html                     ✅  static export
+    └── *.log                              ✅
+
+config files at repo root (runtime):
+├── config.json                            ✅  region/mode
+├── suppliers.json                         ✅  registry
+├── skus.csv                               ✅  input spec
+├── inventory.csv                          ✅  generated
+├── targets.csv                            ✅  generated
+├── groups.txt                             ✅
+├── policy.md                              ✅  bot ground truth
+└── .env                                   ✅  secrets, chmod 600

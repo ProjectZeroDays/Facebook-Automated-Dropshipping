@@ -1,0 +1,17 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>Where do you sell?</h2>
+<p class="d">Sets your tax profile, search radius and business checklist.</p>
+<label>State / territory</label>
+<select name="state" onchange="this.form.submit()">
+  {% for s in states %}<option value="{{ s.code }}" {{ 'selected' if s.code==tax.code }}>{{ s.code }} — {{ s.name }}</option>{% endfor %}
+</select>
+<label>City</label>
+<input name="city" placeholder="Memphis" value="{{ answers.city or 'Memphis' }}" required>
+<div class="card" style="margin-top:14px">
+  <b>{{ tax.name }}</b>
+  <div class="d">{{ tax.base_rate }}% base sales tax · Meta collects as marketplace facilitator</div>
+  <div class="d">{{ tax.business_registration }}</div>
+  <div class="d">1099-K state floor: ${{ '{:,}'.format(tax.k1099_threshold) }}</div>
+  {% if not tax.has_sales_tax %}<div class="ok">No state sales tax here — simpler filings.</div>{% endif %}
+</div>
+{% endblock %}

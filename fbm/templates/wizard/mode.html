@@ -1,0 +1,18 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>How will buyers get their items?</h2>
+<div style="margin-top:14px">
+  {% for val, title, desc in [
+    ('ship','Ship from supplier','Hands-off. Facebook fee 10%. Best to start.'),
+    ('local','Drop off locally','0% fee. You hold a little stock.'),
+    ('hybrid','Both','Ship the catalog, hand over the fast movers.')] %}
+  <label class="card" style="cursor:pointer">
+    <input type="radio" name="mode" value="{{ val }}" {{ 'checked' if val=='ship' }}>
+    <b>{{ title }}</b><div class="d">{{ desc }}</div>
+  </label>
+  {% endfor %}
+</div>
+<label>If you drop off, where?</label>
+<select name="dropoff_where">
+  <option>from home</option><option>public spot (store/parking)</option><option>both</option>
+</select>
+{% endblock %}

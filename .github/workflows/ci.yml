@@ -1,0 +1,13 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -r requirements.txt pytest ruff
+      - run: ruff check .
+      - run: python -c "import fbm_core, tracking, accounts, suppliers, reprice, groups, crosslist, crosslist_post, inbox_poller, inbox_ai, insights, returns, tax, dashboard, deadman, metrics, fbm_validate, targets_builder, copy_generator, samples, session_guard"
+      - run: pytest -q

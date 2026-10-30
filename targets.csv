@@ -1,0 +1,33 @@
+flowchart TD
+    subgraph RUNTIME["fbm_core.py — hardened runtime"]
+        ENV["load_env()\nsecrets + chmod 600"]
+        LOCK["profile_lock()\nfcntl/msvcrt exclusive"]
+        RATE["RateLimiter\ntoken bucket + backoff"]
+        BLOCK["looks_blocked()\nchallenge detection"]
+        SEL["find()\nself-healing selectors"]
+        HC["health()\nunder-extraction alerts"]
+    end
+
+    LOGIN["login_once.py\none-time headful login + calibrate"]
+
+    subgraph SCRIPTS["Pipeline scripts"]
+        GEN["copy_generator.py"]
+        VAL["fbm_validate.py\nLLM honesty"]
+        BOT["fb_marketplace_bot.py"]
+        SCR["competitor_scraper.py"]
+        WATCH["sale_watcher.py"]
+        TGT["targets_builder.py"]
+    end
+
+    RUN["run_all.sh\norchestrator"]
+    N8N["n8n webhook"]
+    ALERT["ALERT_WEBHOOK"]
+
+    LOGIN --> SEL
+    ENV --> RUN
+    RUN --> GEN --> VAL --> BOT
+    RUN --> SCR --> TGT --> SCR
+    RUN --> WATCH --> N8N
+    RUNTIME --> SCRIPTS
+    HC --> ALERT
+    BOCK_NOTE[" "]:::hidden

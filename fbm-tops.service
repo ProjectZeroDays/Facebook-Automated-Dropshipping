@@ -1,0 +1,16 @@
+[Unit]
+Description=FBM Ops - Facebook Marketplace Operations Console
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fbm-ops
+EnvironmentFile=/opt/fbm-ops/.env
+ExecStart=/usr/bin/python3 app.py
+Restart=always
+RestartSec=5
+User=fbm
+Group=fbm
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+{
+  "id": "pa-agent",
+  "name": "Product Analyst",
+  "role": "pa",
+  "description": "Analyzes requirements and produces PRD, user stories, acceptance criteria, and tech stack selection.",
+  "input_contract": {
+    "app_description": "string - raw user requirements",
+    "target_users": "string - who will use the app",
+    "core_features": "string - 3-5 core features",
+    "tech_stack_preference": "string - preferred tech stack"
+  },
+  "output_contract": {
+    "prd": "string - path to PRD.md",
+    "user_stories": "array - list of user stories with acceptance criteria",
+    "tech_stack": "object - frontend, backend, database, deployment",
+    "timeline_estimate": "string - estimated delivery timeline",
+    "risks": "array - identified risks and mitigations"
+  },
+  "verification_gate": [
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/pa/prd.json')); assert 'app_name' in d\"",
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/pa/user_stories.json')); assert len(d) > 0\""
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": false,
+  "depends_on": []
+}

@@ -1,0 +1,171 @@
+{# ============================================================
+   _ui.html — navigation, feedback and data primitives.
+   Import alongside _macros.html:  {% from "_ui.html" import ... %}
+   ============================================================ #}
+
+{% macro tabs(items, active) %}
+<nav class="tabs" role="tablist">
+  {% for it in items %}
+    <a class="tab {% if it.key == active %}is-on{% endif %}"
+       href="{{ it.href }}" role="tab"
+       aria-selected="{{ 'true' if it.key == active else 'false' }}"
+       {% if it.href.startswith('http') %}target="_blank" rel="noopener"{% endif %}>
+      {{ it.label }}
+      {% if it.count %}<span class="pill">{{ it.count }}</span>{% endif %}
+    </a>
+  {% endfor %}
+</nav>
+{% endmacro %}
+
+
+{% macro pager(page, pages, base_url, window=2) %}
+{% if pages > 1 %}
+<nav class="pager" aria-label="Pagination">
+  <a class="btn btn--sm btn--secondary {% if page <= 1 %}is-disabled{% endif %}"
+     href="{{ base_url }}{{ page - 1 if page > 1 else 1 }}">←</a>
+  {% set lo = [1, page - window] | max %}
+  {% set hi = [pages, page + window] | min %}
+  {% if lo > 1 %}
+    <a class="btn btn--sm btn--secondary" href="{{ base_url }}1">1</a>
+    {% if lo > 2 %}<span class="sub">…</span>{% endif %}
+  {% endif %}
+  {% for p in range(lo, hi + 1) %}
+    <a class="btn btn--sm {% if p == page %}btn--primary{% else %}btn--secondary{% endif %}"
+       href="{{ base_url }}{{ p }}">{{ p }}</a>
+  {% endfor %}
+  {% if hi < pages %}
+    {% if hi < pages - 1 %}<span class="sub">…</span>{% endif %}
+    <a class="btn btn--sm btn--secondary" href="{{ base_url }}{{ pages }}">{{ pages }}</a>
+  {% endif %}
+  <a class="btn btn--sm btn--secondary {% if page >= pages %}is-disabled{% endif %}"
+     href="{{ base_url }}{{ page + 1 if page < pages else pages }}">→</a>
+</nav>
+{% endif %}
+{% endmacro %}
+
+
+{% macro progress(value, max=100, tone='accent', label=None) %}
+{% set pct = (value / max * 100) | round(1) %}
+<div class="progress-row">
+  {% if label %}
+  <div class="progress-head"><span class="sub">{{ label }}</span>
+    <span class="sub mono">{{ value }} / {{ max }}</span></div>
+  {% endif %}
+  <div class="bar" role="progressbar" aria-valuenow="{{ value }}"
+       aria-valuemin="0" aria-valuemax="{{ max }}">
+    <i style="width:{{ pct }}%" class="bar--{{ tone }}"></i>
+  </div>
+</div>
+{% endmacro %}
+
+
+{% macro alert(tone, title, body=None, dismissible=True) %}
+{% set glyph = {'info':'i','success':'✓','warn':'!','danger':'×'}[tone] %}
+<div class="alert alert--{{ tone }}" role="alert">
+  <span class="alert-ico">{{ glyph }}</span>
+  <div class="alert-body">
+    <strong>{{ title }}</strong>
+    {% if body %}<span>{{ body }}</span>{% endif %}
+  </div>
+  {% if dismissible %}
+  <button class="alert-x" type="button" data-dismiss aria-label="Dismiss">×</button>
+  {% endif %}
+</div>
+{% endmacro %}
+
+
+{% macro avatar(name, src=None, size='md', presence=None) %}
+{% set initials = name.split() | map('first') | join('') | upper %}
+<span class="av av--{{ size }}">
+  {% if src %}<img src="{{ src }}" alt="{{ name }}">{% else %}{{ initials }}{% endif %}
+  {% if presence %}<span class="av-dot av-dot--{{ presence }}"></span>{% endif %}
+</span>
+{% endmacro %}
+
+
+{% macro avatar_stack(people, max=4) %}
+<span class="av-stack">
+  {% for p in people[:max] %}{{ avatar(p.name, p.avatar, 'sm') }}{% endfor %}
+  {% if people|length > max %}<span class="av av--sm av--more">+{{ people|length - max }}</span>{% endif %}
+</span>
+{% endmacro %}
+
+
+{% macro crumbs(items) %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  {% for it in items %}
+    {% if not loop.last %}<a href="{{ it.href }}">{{ it.label }}</a><span class="crumbs-sep">/</span>
+    {% else %}<span aria-current="page">{{ it.label }}</span>{% endif %}
+  {% endfor %}
+</nav>
+{% endmacro %}
+
+
+{% macro step(items, current) %}
+<ol class="steps">
+  {% for it in items %}
+    <li class="step {% if it.key == current %}is-on{% elif it.done %}is-done{% endif %}">
+      <span class="step-n">{% if it.done %}✓{% else %}{{ loop.index }}{% endif %}</span>
+      {{ it.label }}
+    </li>
+    {% if not loop.last %}<span class="step-ln"></span>{% endif %}
+  {% endfor %}
+</ol>
+{% endmacro %}
+
+
+{% macro nav_item(href, label, icon=None, active=False, count=None, badge=None) %}
+<a class="nav-item {% if active %}is-on{% endif %}" href="{{ href }}"
+   {% if active %}aria-current="page"{% endif %}>
+  {% if icon %}<span class="nav-ico">{{ icon }}</span>{% endif %}
+  <span>{{ label }}</span>
+  {% if count %}<span class="pill">{{ count }}</span>{% endif %}
+  {% if badge %}<span class="badge badge--{{ badge.tone }}">{{ badge.text }}</span>{% endif %}
+</a>
+{% endmacro %}
+
+
+{% macro sparkline(values, tone='accent', width=96, height=28) %}
+{% set lo = values | min %}{% set hi = values | max %}
+{% set span = (hi - lo) if hi != lo else 1 %}
+{% set step = width / ((values | length) - 1 if (values | length) > 1 else 1) %}
+<polyline class="spark spark--{{ tone }}" fill="none" stroke-width="1.75"
+  stroke-linejoin="round" stroke-linecap="round" points="
+  {%- for v in values -%}
+    {{ (loop.index0 * step) | round(1) }},{{ (height - ((v - lo) / span * (height - 4)) - 2) | round(1) }}
+    {%- if not loop.last %} {% endif -%}
+  {%- endfor -%}"/>
+{% endmacro %}
+
+
+{% macro kv(rows, dense=False) %}
+<dl class="kv {% if dense %}kv--dense{% endif %}">
+  {% for k, v in rows %}
+  <div class="kv-row"><dt>{{ k }}</dt><dd>{{ v }}</dd></div>
+  {% endfor %}
+</dl>
+{% endmacro %}
+
+
+{% macro secret_field(name, value, label='Value', reveal=True) %}
+<div class="field">
+  <label class="lbl" for="sec-{{ name }}">{{ label }}</label>
+  <div class="igroup">
+    <input class="inp mono" id="sec-{{ name }}" name="{{ name }}"
+           type="{{ 'password' if reveal else 'text' }}" value="{{ value }}" readonly>
+    {% if reveal %}
+    <button class="affix affix--btn" type="button" data-reveal="#sec-{{ name }}">show</button>
+    {% endif %}
+    <button class="affix affix--btn" type="button" data-copy="{{ value }}">copy</button>
+  </div>
+</div>
+{% endmacro %}
+
+
+{% macro dropzone(name, accept='image/*', hint='PNG or JPG · up to 10 files') %}
+<label class="drop">
+  <input type="file" name="{{ name }}" accept="{{ accept }}" multiple hidden>
+  <strong>Drop files here</strong>
+  <span class="sub">{{ hint }}</span>
+</label>
+{% endmacro %}

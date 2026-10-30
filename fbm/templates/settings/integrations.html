@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field, badge, card, status_badge %}
+{% block title %}Integrations{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Integrations</h2>
+<div class="d" style="margin-bottom:18px">Connect suppliers, marketplaces, AI providers, and notification channels.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Available integrations</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Integration</th><th>Type</th><th>Status</th><th>Features</th><th></th></tr></thead>
+      <tbody>
+        {% for integ in integrations %}
+        <tr>
+          <td>
+            <strong>{{ integ.name }}</strong>
+            <div class="sub">{{ integ.category }}</div>
+          </td>
+          <td class="sub">{{ integ.auth }}</td>
+          <td>{{ status_badge('connected' if integ.connected else 'off', integ.connected and 'success' or 'warn') }}</td>
+          <td class="sub">{{ integ.features | join(', ') if integ.features else '—' }}</td>
+          <td class="ta-r">
+            {% if not integ.connected %}
+            <button class="btn sm p" data-modal="#connectModal" data-iid="{{ iid }}">Connect</button>
+            {% else %}
+            <button class="btn sm ghost" data-modal="#settingsModal" data-iid="{{ iid }}">Settings</button>
+            <button class="btn sm danger" data-post="/settings/integrations/{{ iid }}/disconnect">Disconnect</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Connected secrets</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Integration</th><th>Secret name</th><th>Value</th><th></th></tr></thead>
+      <tbody>
+        {% for name in secret_names %}
+        <tr>
+          <td>{{ name.split('_')[0] }}</td>
+          <td class="mono">{{ name }}</td>
+          <td class="sub mono">••••••••</td>
+          <td class="ta-r"><button class="btn sm ghost" data-post="/settings/integrations/{{ name.split('_')[0] }}/reveal">Reveal</button></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="tbl-empty">No secrets stored.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

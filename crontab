@@ -1,0 +1,10 @@
+# full pipeline twice daily
+0 8,20 * * * cd /app && ./run_all.sh >> /app/data/run_all.log 2>&1
+# order sweep every 5 minutes
+*/5 * * * * cd /app && python3 sale_watcher.py --once >> /app/data/watcher.log 2>&1
+# auto-reprice nightly
+0 3 * * *   cd /app && python3 reprice.py >> /app/data/reprice.log 2>&1
+# comps refresh nightly
+30 3 * * *  cd /app && python3 competitor_scraper.py --city "$CITY" --queries "$QUERIES" >> /app/data/comps.log 2>&1
+# pnl roll-up monthly
+5 1 1 * *   cd /app && python3 tax.py --export >> /app/data/pnl.log 2>&1

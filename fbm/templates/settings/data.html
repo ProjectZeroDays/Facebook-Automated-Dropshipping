@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, card %}
+{% block title %}Data{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Data</h2>
+<div class="d" style="margin-bottom:18px">Export your data, wipe your local cache, or delete your account.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Export all data</strong></div>
+  <div class="card-b">
+    <div class="d">Download a JSON zip of your database, listings, orders, and events.</div>
+    <button class="btn p mt-3" data-post="/settings/data/export">Download export</button>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Wipe local cache</strong></div>
+  <div class="card-b">
+    <div class="d">Clear the local browser profile, selectors, and cached comps. Your data on the server is unaffected.</div>
+    <button class="btn sm danger mt-3" data-modal="#wipeCacheModal">Wipe cache</button>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Delete account</strong></div>
+  <div class="card-b">
+    <div class="d">Permanently delete your account and all associated data. This cannot be undone.</div>
+    <div class="sub mt-2">Your data will be retained for 30 days in case of accidental deletion.</div>
+    <button class="btn sm danger mt-3" data-modal="#deleteAccountModal">Delete account</button>
+  </div>
+</div>
+{% endblock %}

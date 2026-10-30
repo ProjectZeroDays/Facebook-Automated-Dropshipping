@@ -1,0 +1,152 @@
+# ============================================================================
+# FBM Ops - Production Docker Compose (one-click VPS deployment)
+# Services: backend, dashboard, cron worker, daemon monitor, prometheus, grafana
+# ============================================================================
+version: "3.8"
+
+services:
+  # ==========================================================================
+  # Backend API - Flask application on port 5000
+  # ==========================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: ["backend"]
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./inventory.csv:/app/inventory.csv:ro
+      - ./skus.csv:/app/skus.csv:ro
+      - ./groups.txt:/app/groups.txt:ro
+      - ./suppliers.json:/app/suppliers.json:ro
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    shm_size: 2gb
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # ==========================================================================
+  # Dashboard - Flask admin console on port 8080
+  # ==========================================================================
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: ["dashboard"]
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  # ==========================================================================
+  # Cron Worker - scheduled tasks (watch, reprice, comps, pnl)
+  # ==========================================================================
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: ["worker"]
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./inventory.csv:/app/inventory.csv:ro
+      - ./skus.csv:/app/skus.csv:ro
+      - ./groups.txt:/app/groups.txt:ro
+      - ./suppliers.json:/app/suppliers.json:ro
+    restart: unless-stopped
+    shm_size: 1gb
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ==========================================================================
+  # Daemon Monitor - auto-restart critical services
+  # ==========================================================================
+  daemon:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: ["monitor"]
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+      dashboard:
+        condition: service_healthy
+
+  # ==========================================================================
+  # Prometheus - metrics collection
+  # ==========================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./data/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  # ==========================================================================
+  # Grafana - dashboards and alerting
+  # ==========================================================================
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_DEFAULT_THEME: dark
+    volumes:
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./data/grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      prometheus:
+        condition: service_started
+
+networks:
+  default:
+    name: fbm-ops

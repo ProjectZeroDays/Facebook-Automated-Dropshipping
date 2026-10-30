@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% from "_macros.html" import toggle, field, card, badge %}
+{% block title %}Notifications{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Notifications</h2>
+<div class="d" style="margin-bottom:18px">Configure how you receive alerts about sales, tracking, and system events.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Alert channels</strong></div>
+  <div class="card-b">
+    <div class="row">
+      <div>{{ toggle('alert_browser', true, 'Browser push') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_sound', true, 'Sound alerts') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_email', false, 'Email notifications') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_slack', false, 'Slack / Discord webhook') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_sms', false, 'SMS (Twilio)') }}</div>
+    </div>
+    {{ field('slack_webhook', 'Slack webhook URL', value=slack_webhook or '', type='text') }}
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Alert types</strong></div>
+  <div class="card-b">
+    <div class="row">
+      <div>{{ toggle('alert_new_orders', true, 'New orders') }}</div>
+      <div class="ta-r">{{ badge('critical', 'warn') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_tracking', true, 'Tracking updates') }}</div>
+      <div class="ta-r">{{ badge('standard', 'info') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_overdue', true, 'Overdue orders') }}</div>
+      <div class="ta-r">{{ badge('critical', 'danger') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_supplier_fail', true, 'Supplier failures') }}</div>
+      <div class="ta-r">{{ badge('warning', 'warn') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ toggle('alert_auto_login', true, 'Auto-login failures') }}</div>
+      <div class="ta-r">{{ badge('critical', 'danger') }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Quiet hours</strong></div>
+  <div class="card-b">
+    <div class="row">
+      <div>{{ toggle('quiet_hours', true, 'Enable quiet hours') }}</div>
+    </div>
+    <div class="row mt-2">
+      <div>{{ field('quiet_start', 'Start', value='22:00', type='time') }}</div>
+      <div>{{ field('quiet_end', 'End', value='07:00', type='time') }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

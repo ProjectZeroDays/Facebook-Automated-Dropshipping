@@ -1,0 +1,11 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>What should we sell first?</h2>
+<p class="d">We'll generate 10 listings with copy, prices and margins.</p>
+<div class="grid2" style="margin-top:12px">
+  {% for n in ['Pet','Kitchen','Fitness','Home organisation','Beauty','Baby & kids','Tech accessories','Car'] %}
+  <label class="card" style="cursor:pointer;margin:0">
+    <input type="checkbox" name="niches" value="{{ n }}"> {{ n }}
+  </label>
+  {% endfor %}
+</div>
+{% endblock %}

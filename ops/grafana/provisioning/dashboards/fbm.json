@@ -1,0 +1,39 @@
+{
+  "uid": "fbm-ops",
+  "title": "FBM Ops",
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": { "from": "now-24h", "to": "now" },
+  "panels": [
+    { "id": 1, "type": "stat", "title": "New orders", "gridPos": {"h":4,"w":4,"x":0,"y":0},
+      "targets": [{"expr": "fbm_orders_new", "refId": "A"}],
+      "options": {"colorMode":"background","graphMode":"none"},
+      "fieldConfig": {"defaults": {"thresholds": {"steps":[{"color":"green","value":null},{"color":"orange","value":3},{"color":"red","value":6}]}}} },
+
+    { "id": 2, "type": "stat", "title": "Orders overdue", "gridPos": {"h":4,"w":4,"x":4,"y":0},
+      "targets": [{"expr": "fbm_orders_overdue", "refId": "A"}],
+      "options": {"colorMode":"background"},
+      "fieldConfig": {"defaults": {"thresholds": {"steps":[{"color":"green","value":null},{"color":"red","value":1}]}}} },
+
+    { "id": 3, "type": "stat", "title": "Active listings", "gridPos": {"h":4,"w":4,"x":8,"y":0},
+      "targets": [{"expr": "fbm_listings_active", "refId": "A"}] },
+
+    { "id": 4, "type": "stat", "title": "Active SKUs", "gridPos": {"h":4,"w":4,"x":12,"y":0},
+      "targets": [{"expr": "fbm_skus_active", "refId": "A"}] },
+
+    { "id": 5, "type": "stat", "title": "Minutes since last run", "gridPos": {"h":4,"w":4,"x":16,"y":0},
+      "targets": [{"expr": "(time() - fbm_last_run_timestamp) / 60", "refId": "A"}],
+      "fieldConfig": {"defaults": {"thresholds": {"steps":[{"color":"green","value":null},{"color":"orange","value":90},{"color":"red","value":360}]}}} },
+
+    { "id": 6, "type": "stat", "title": "Comps rows", "gridPos": {"h":4,"w":4,"x":20,"y":0},
+      "targets": [{"expr": "fbm_comps_rows", "refId": "A"}] },
+
+    { "id": 7, "type": "timeseries", "title": "Actions / min", "gridPos": {"h":8,"w":12,"x":0,"y":4},
+      "targets": [{"expr": "sum by (kind) (rate(fbm_actions_total[5m]))", "refId": "A"}] },
+
+    { "id": 8, "type": "timeseries", "title": "Orders new vs overdue", "gridPos": {"h":8,"w":12,"x":12,"y":4},
+      "targets": [
+        {"expr": "fbm_orders_new", "refId": "A", "legendFormat": "new"},
+        {"expr": "fbm_orders_overdue", "refId": "B", "legendFormat": "overdue"} ] }
+  ]
+}

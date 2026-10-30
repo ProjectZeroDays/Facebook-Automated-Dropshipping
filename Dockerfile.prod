@@ -1,0 +1,64 @@
+# ============================================================================
+# FBM Ops - Production Dockerfile (standalone, self-hosting ready)
+# Multi-stage: build Python deps, then runtime with all services
+# ============================================================================
+FROM mcr.microsoft.com/playwright/python:v1.47.0-jammy AS builder
+
+WORKDIR /app
+
+# System dependencies for headless Chrome + build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        xvfb cron tini curl sqlite3 gcc g++ make \
+        libffi-dev libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt \
+    && pip install --no-cache-dir --user gunicorn[gevent] psycopg2-binary
+
+# Install Playwright browsers with system deps
+RUN python -m playwright install --with-deps chromium
+
+# ============================================================================
+# Runtime stage
+# ============================================================================
+FROM mcr.microsoft.com/playwright/python:v1.47.0-jammy
+
+WORKDIR /app
+
+# Runtime system deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        xvfb cron tini curl sqlite3 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+
+# Copy application code
+COPY . .
+
+# Create data directories
+RUN mkdir -p /app/data /app/data/logs /app/data/backups \
+    /app/data/imgs/variants /app/data/daemon /app/models
+
+# Environment defaults for production
+ENV FBM_PROFILE=/app/data/fb_profile \
+    FBM_DB=/app/data/fbm.sqlite \
+    FBM_STATE=/app/data/fbm_state.json \
+    FBM_SELECTORS=/app/data/selectors.json \
+    DISPLAY=:99 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+# Copy entrypoint and make executable
+COPY entrypoint.prod.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Health check port
+EXPOSE 5000 8080 9090 3000
+
+ENTRYPOINT ["/usr/bin/tini", "--", "/entrypoint.sh"]
+CMD ["all"]

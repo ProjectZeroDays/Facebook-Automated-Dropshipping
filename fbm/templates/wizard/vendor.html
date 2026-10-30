@@ -1,0 +1,20 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>Connect a supplier</h2>
+<p class="d">Rated and vetted. You can add more later from the vendors screen.</p>
+{% for iid, v in vendors.items() if v.category == 'supplier' %}
+<div class="card">
+  <div class="row" style="border:none;padding:0">
+    <div><b>{{ v.name }}</b><div class="d">★ {{ v.rating }} · {{ v.pricing }}</div></div>
+    <div><a class="pill" href="{{ v.signup }}" target="_blank">Sign up</a>
+      <button type="button" class="p" onclick="connectVendor('{{ iid }}')">Connect</button></div>
+  </div>
+  <div class="d" style="margin-top:6px">{{ v.pros|join(' · ') }}</div>
+</div>
+{% endfor %}
+<input type="hidden" name="vendor" value="{{ answers.vendor or '' }}">
+<script>
+function connectVendor(i){document.querySelector('input[name=vendor]').value=i;
+  fetch('/integrations/'+i+'/connect',{method:'POST'}).then(r=>r.json())
+    .then(d=>alert(d.message||'connect started'));}
+</script>
+{% endblock %}

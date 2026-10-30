@@ -1,0 +1,17 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>Your first listings</h2>
+<p class="d">Edit anything. Rows under 35% margin are flagged.</p>
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-top:12px">
+  <tr><th align="left">Product</th><th align="right">Cost</th><th align="right">Price</th><th align="right">Net</th></tr>
+  {% for r in sample_skus or [
+    {'title':'Pet hair remover roller','cost':7,'price':27.99},
+    {'title':'Posture corrector','cost':9,'price':34.99},
+    {'title':'Slow-feeder dog bowl','cost':8,'price':29.99},
+    {'title':'Heatless curl set','cost':8,'price':29.99},
+    {'title':'Resistance band set','cost':12,'price':39.99}] %}
+  <tr><td>{{ r.title }}</td><td align="right">${{ '%.2f'|format(r.cost) }}</td>
+    <td align="right">${{ '%.2f'|format(r.price) }}</td>
+    <td align="right" class="ok">${{ '%.2f'|format(r.price*0.87 - r.cost) }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

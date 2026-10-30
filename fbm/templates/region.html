@@ -1,0 +1,9 @@
+<form method="post" action="/wizard?step=region">
+  <input type="hidden" name="preview" id="preview" value="">
+  <label>State / territory</label>
+  <select name="state" onchange="document.getElementById('preview').value='1';this.form.submit()">
+    {% for s in states %}<option value="{{ s.code }}" {{ 'selected' if s.code==tax.code }}>{{ s.code }} — {{ s.name }}</option>{% endfor %}
+  </select>
+  <noscript><button name="preview" value="1" type="submit">Update tax panel</button></noscript>
+  ...
+</form>

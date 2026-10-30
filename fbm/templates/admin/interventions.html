@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% from "_macros.html" import table, badge, card, status_badge %}
+{% block title %}Interventions{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Interventions</h2>
+<div class="d" style="margin-bottom:18px">Nudge log and attribution for retention campaigns.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Recent interventions</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Time</th><th>Tenant</th><th>Action</th><th>Channel</th><th>Status</th><th>Converted</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="sub">2 hours ago</td>
+          <td><strong>Charlotte seller</strong></td>
+          <td>Win-back offer</td>
+          <td>Email</td>
+          <td>{{ badge('sent', 'success') }}</td>
+          <td class="sub">—</td>
+          <td class="ta-r"><button class="btn sm ghost" data-post="/admin/interventions/1/convert">Mark converted</button></td>
+        </tr>
+        <tr>
+          <td class="sub">6 hours ago</td>
+          <td><strong>Nashville trader</strong></td>
+          <td>Pro upgrade suggestion</td>
+          <td>In-app</td>
+          <td>{{ badge('sent', 'success') }}</td>
+          <td class="sub">Converted</td>
+          <td class="ta-r">{{ status_badge('success') }}</td>
+        </tr>
+        <tr>
+          <td class="sub">1 day ago</td>
+          <td><strong>Atlanta flipper</strong></td>
+          <td>$25 credit</td>
+          <td>Email</td>
+          <td>{{ badge('sent', 'success') }}</td>
+          <td class="sub">—</td>
+          <td class="ta-r"><button class="btn sm ghost" data-post="/admin/interventions/3/convert">Mark converted</button></td>
+        </tr>
+        <tr>
+          <td class="sub">3 days ago</td>
+          <td><strong>Birmingham reseller</strong></td>
+          <td>Onboarding call</td>
+          <td>Calendar</td>
+          <td>{{ badge('completed', 'success') }}</td>
+          <td class="sub">Scheduled</td>
+          <td class="ta-r">{{ badge('info', 'info') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Intervention effectiveness</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Action</th><th>Sent</th><th>Converted</th><th>Rate</th><th>Avg lift</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Win-back offer</strong></td>
+          <td class="mono">24</td>
+          <td class="mono">8</td>
+          <td class="mono">33%</td>
+          <td class="mono">+$47/mo</td>
+        </tr>
+        <tr>
+          <td><strong>Upgrade suggestion</strong></td>
+          <td class="mono">18</td>
+          <td class="mono">6</td>
+          <td class="mono">33%</td>
+          <td class="mono">+$100/mo</td>
+        </tr>
+        <tr>
+          <td><strong>Onboarding call</strong></td>
+          <td class="mono">12</td>
+          <td class="mono">9</td>
+          <td class="mono">75%</td>
+          <td class="mono">+$150/mo</td>
+        </tr>
+        <tr>
+          <td><strong>$25 credit</strong></td>
+          <td class="mono">31</td>
+          <td class="mono">4</td>
+          <td class="mono">13%</td>
+          <td class="mono">+$0/mo</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

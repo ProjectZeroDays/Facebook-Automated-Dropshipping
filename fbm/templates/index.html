@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Hands-free Facebook Marketplace selling{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<header class="mk-nav">
+  <a class="mk-brand" href="/"><span class="mark"></span> MarketLoop</a>
+  <nav class="mk-links">
+    <a href="#how">How it works</a><a href="#pricing">Pricing</a>
+    <a href="/vendors">Vendors</a><a href="/help">Help</a>
+  </nav>
+  <div class="row">
+    <button class="btn btn--ghost" data-theme-toggle aria-label="Toggle theme">◐</button>
+    <a class="btn btn--ghost" href="/auth/login">Sign in</a>
+    <a class="btn btn--primary" href="/auth/signup">Start 15-day trial</a>
+  </div>
+</header>
+
+<section class="mk-hero">
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="mk-hero-in">
+    <span class="badge badge--accent">No Facebook API required</span>
+    <h1>Your Marketplace store,<br>run by a bot.</h1>
+    <p class="mk-lede">Connect your Facebook profile, pick a city, import a CSV. MarketLoop lists, renews, re-prices against live competitors, and ingests tracking — while you sleep.</p>
+    <div class="row">
+      <a class="btn btn--primary btn--lg" href="/auth/signup">Start free — 15 days</a>
+      <a class="btn btn--secondary btn--lg" href="#how">See the engine</a>
+    </div>
+    <p class="sub mt-2">Card required · cancel anytime · passkey sign-in</p>
+  </div>
+  <div class="mk-proof">
+    <div class="kpi"><div class="k">Median listings live</div><div class="v">128</div><div class="d">per account, day 30</div></div>
+    <div class="kpi"><div class="k">Hours saved / week</div><div class="v">11.4</div><div class="d">vs manual posting</div></div>
+    <div class="kpi"><div class="k">Renew automation</div><div class="v">5×</div><div class="d">then relist, zero touch</div></div>
+    <div class="kpi"><div class="k">Setup time</div><div class="v">4 min</div><div class="d">first listing live</div></div>
+  </div>
+</section>
+
+<section id="how" class="mk-sec">
+  <h2 class="mk-h">Four steps, then it runs itself</h2>
+  <div class="grid grid-4">
+    <div class="card"><div class="card-b"><span class="badge badge--accent">01</span><h3>Connect</h3><p class="sub">Headful first login over VNC, then the profile lock takes over so two runs never collide.</p></div></div>
+    <div class="card"><div class="card-b"><span class="badge badge--accent">02</span><h3>Pick a city</h3><p class="sub">Local demand and price bands are pulled per metro. Memphis, Nashville, Atlanta — any ZIP.</p></div></div>
+    <div class="card"><div class="card-b"><span class="badge badge--accent">03</span><h3>Import products</h3><p class="sub">CSV with names, prices, links, photos. The LLM writes copy and a validator keeps it honest.</p></div></div>
+    <div class="card"><div class="card-b"><span class="badge badge--accent">04</span><h3>Walk away</h3><p class="sub">Listing, renewing, competitor pricing, supplier failover and tracking — all automated.</p></div></div>
+  </div>
+</section>
+
+<section class="mk-sec">
+  <h2 class="mk-h">Built for the parts that actually break</h2>
+  <div class="grid grid-3">
+    {% for f in features %}
+    <div class="card"><div class="card-b"><span class="badge badge--{{ f.tone }}">{{ f.tag }}</span><h3>{{ f.title }}</h3><p class="sub">{{ f.body }}</p></div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="pricing" class="mk-sec">
+  <h2 class="mk-h">Pricing</h2>
+  <p class="sub">Start on Starter, upgrade when volume pays for it. Every tier includes the full engine.</p>
+  <div class="grid grid-3 mt-3">
+    {% for p in plans %}
+    <div class="card plan {% if p.featured %}plan--featured{% endif %}">
+      <div class="card-b">
+        {% if p.featured %}<span class="badge badge--solid">Most popular</span>{% endif %}
+        <h3>{{ p.name }}</h3>
+        <p class="plan-price">${{ p.price }}<span class="sub">/mo</span></p>
+        <ul class="plan-list">{% for line in p.lines %}<li>{{ line }}</li>{% endfor %}</ul>
+        <a class="btn {% if p.featured %}btn--primary{% else %}btn--secondary{% endif %} btn--full" href="/auth/signup?plan={{ p.key }}">{{ p.cta }}</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="mk-sec mk-cta">
+  <div class="card"><div class="card-b ta-c">
+    <h2>Fifteen days is enough to know</h2>
+    <p class="sub">Listing warm-up eats the first week. We give you two, so you see real orders before you pay.</p>
+    <a class="btn btn--primary btn--lg" href="/auth/signup">Start the trial</a>
+  </div></div>
+</section>
+
+<footer class="mk-foot">
+  <div class="row"><span class="mk-brand"><span class="mark"></span> MarketLoop</span><span class="sub">© 2026 · <a href="/help">Help</a> · <a href="/vendors">Vendors</a> · <a href="/legal/terms">Terms</a> · <a href="/legal/privacy">Privacy</a></span></div>
+</footer>
+{% endblock %}

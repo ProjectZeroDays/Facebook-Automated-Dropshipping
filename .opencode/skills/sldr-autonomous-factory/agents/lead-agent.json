@@ -1,0 +1,25 @@
+{
+  "id": "lead-agent",
+  "name": "Lead Developer",
+  "role": "lead",
+  "description": "Breaks architecture into implementation tasks, assigns to specialist agents, enforces coding standards.",
+  "input_contract": {
+    "architecture": "object - system architecture design",
+    "api_contracts": "object - API endpoint definitions",
+    "directory_structure": "object - project folder layout",
+    "tech_stack": "object - selected technologies"
+  },
+  "output_contract": {
+    "task_plan": "string - path to task_plan.md",
+    "agent_assignments": "object - which agent handles which tasks",
+    "coding_standards": "object - linting, formatting, naming conventions",
+    "milestones": "array - implementation milestones with dependencies"
+  },
+  "verification_gate": [
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/lead/task_plan.json')); assert len(d) > 0\"",
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/lead/agent_assignments.json')); assert 'frontend' in d and 'backend' in d\""
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": false,
+  "depends_on": ["arch"]
+}

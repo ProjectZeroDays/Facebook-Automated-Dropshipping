@@ -1,0 +1,19 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>Connect Facebook</h2>
+<p class="d">Log in once — we keep you logged in from then on.</p>
+<div class="card" style="margin-top:14px">
+  <div class="row"><span>Account check</span><span id="fbstate" class="pill">not checked</span></div>
+  <div class="row"><span>Marketplace access</span><span class="pill">needed</span></div>
+</div>
+<div style="display:flex;gap:8px">
+  <button type="button" class="p" onclick="fbLogin()">Open login window</button>
+  <a class="pill" href="https://www.facebook.com/r.php" target="_blank">Create an account</a>
+</div>
+<script>
+async function fbLogin(){
+  document.getElementById('fbstate').textContent='opening…';
+  const d=await fetch('/onboarding/fb-login',{method:'POST'}).then(r=>r.json());
+  document.getElementById('fbstate').textContent=d.status;
+}
+</script>
+{% endblock %}

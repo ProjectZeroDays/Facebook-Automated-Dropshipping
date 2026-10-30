@@ -1,0 +1,39 @@
+{
+  "id": "auto",
+  "name": "SLDR Auto Build",
+  "description": "Autonomous full-stack application builder - requirements to production",
+  "command": "python .opencode/skills/sldr-autonomous-factory/auto_command.py",
+  "arguments": [
+    {
+      "name": "requirements",
+      "type": "string",
+      "description": "Application requirements to build",
+      "required": false
+    },
+    {
+      "name": "status",
+      "type": "flag",
+      "description": "Check current production readiness status",
+      "required": false
+    },
+    {
+      "name": "resume",
+      "type": "flag",
+      "description": "Resume from last saved state",
+      "required": false
+    },
+    {
+      "name": "init",
+      "type": "flag",
+      "description": "Initialize .opencode directory structure",
+      "required": false
+    }
+  ],
+  "triggers": [
+    "/auto",
+    "/sldr"
+  ],
+  "model": "claude-3.5-sonnet",
+  "works_globally": true,
+  "works_per_project": true
+}

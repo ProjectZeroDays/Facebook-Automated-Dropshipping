@@ -1,0 +1,26 @@
+{
+  "id": "be-agent",
+  "name": "Backend Developer",
+  "role": "be",
+  "description": "Implements API routes, business logic, database models, authentication, and middleware.",
+  "input_contract": {
+    "task_plan": "object - implementation tasks",
+    "schema_sql": "string - database schema path",
+    "api_contracts": "object - API endpoint definitions",
+    "tech_stack": "object - backend framework"
+  },
+  "output_contract": {
+    "api_routes": "array - list of implemented API endpoints",
+    "database_models": "array - list of data models",
+    "auth_implementation": "object - auth strategy and config",
+    "middleware": "array - middleware components",
+    "test_results": "object - backend test results"
+  },
+  "verification_gate": [
+    "python -m pytest tests/ -q",
+    "python -m ruff check ."
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": true,
+  "depends_on": ["lead"]
+}

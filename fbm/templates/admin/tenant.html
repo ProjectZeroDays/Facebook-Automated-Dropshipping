@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card, badge, status_badge, table %}
+{% from "_ui.html" import tabs, alert, kv, progress, sparkline, avatar %}
+
+{% block title %}{{ tenant.name }} · admin{% endblock %}
+{% block page_actions %}
+<div class="row">
+  <button class="btn btn--secondary" data-post="/admin/tenants/{{ tenant.id }}/impersonate">Impersonate</button>
+  <button class="btn btn--secondary" data-modal="#compModal">Comp / extend</button>
+  <button class="btn btn--primary" data-modal="#noteModal">Add note</button>
+</div>
+{% endblock %}
+
+{% block content %}
+{{ alert('warn', 'You are viewing as admin', 'Actions here bypass tenant-level guards and are logged.') }}
+
+<div class="page-head">
+  <div class="row">
+    {{ avatar(tenant.name, tenant.avatar, 'lg', tenant.presence) }}
+    <div><h1>{{ tenant.name }} {{ badge(tenant.plan, 'accent') }}</h1><p class="sub">{{ tenant.email }} · joined {{ tenant.joined }} · {{ tenant.region }} · <code>{{ tenant.id }}</code></p></div>
+  </div>
+  <div class="row">{{ status_badge(tenant.state) }}<span class="badge badge--{{ tenant.churn_tone }}">churn score {{ tenant.churn_score }}</span></div>
+</div>
+
+{{ tabs([{'key':'overview','label':'Overview','href':'#'},{'key':'modules','label':'Modules','href':'#'},{'key':'hooks','label':'Webhooks','href':'#','count': hooks|length},{'key':'log','label':'Interventions','href':'#','count': interventions|length},{'key':'secrets','label':'Secrets','href':'#'}], 'overview') }}
+
+<div class="grid grid-4 mt-3">
+  {{ kpi('MRR', '$' ~ tenant.mrr, tenant.plan, 'up') }}
+  {{ kpi('Listings live', tenant.listings_live, tenant.listings_delta ~ ' this week', 'up') }}
+  {{ kpi('Orders (30d)', tenant.orders_30d, '$' ~ tenant.gmv_30d ~ ' GMV', 'up') }}
+  {{ kpi('Trial / tenure', tenant.tenure, tenant.days_left ~ ' days left', 'up') }}
+</div>
+
+<div class="grid grid-2 mt-3">
+  {% call card('Engagement (30 days)') %}
+    <svg width="300" height="60" viewBox="0 0 300 60" class="spark-wrap">{{ sparkline(tenant.activity, 'accent', 300, 60) }}</svg>
+    {{ kv([('Last login', tenant.last_login),('Sessions (30d)', tenant.sessions),('Bot messages', tenant.bot_msgs),('Feature breadth', tenant.features_used ~ ' / ' ~ tenant.features_total)], dense=True) }}
+  {% endcall %}
+  {% call card('Intervention log') %}
+    <ol class="tl">{% for i in interventions %}<li class="tl-i {{ 'is-ok' if i.converted else '' }}"><strong>{{ i.action }}</strong> <span class="badge badge--{{ i.tone }}">{{ i.kind }}</span><div class="sub">{{ i.when }} · by {{ i.actor }}</div></li>{% else %}<li class="sub">No interventions logged.</li>{% endfor %}</ol>
+  {% endcall %}
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Module gating</strong></div>
+  <table class="tbl">
+    <thead><tr><th>Module</th><th>Tier floor</th><th>Override</th><th>Usage</th></tr></thead>
+    <tbody>{% for m in modules %}<tr><td><strong>{{ m.label }}</strong><div class="sub">{{ m.desc }}</div></td><td>{{ badge(m.floor, 'info') }}</td><td><label class="check"><input type="checkbox" {% if m.enabled %}checked{% endif %}><span class="sw"></span> {{ 'enabled' if m.enabled else 'off' }}</label></td><td class="sub">{{ m.usage }}</td></tr>{% endfor %}</tbody>
+  </table>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Webhook events</strong></div>
+  {% call table(['Received','Type','Status','Attempts','']) %}
+    {% for e in hooks %}<tr><td class="sub mono">{{ e.received }}</td><td class="mono">{{ e.type }}</td><td>{{ status_badge(e.state) }}</td><td>{{ e.attempts }}</td><td class="ta-r"><button class="btn btn--sm btn--ghost" data-post="/admin/hooks/{{ e.id }}/replay">Replay</button></td></tr>
+    {% else %}<tr><td colspan="5" class="tbl-empty">No events.</td></tr>{% endfor %}
+  {% endcall %}
+</div>
+
+<div class="grid grid-2 mt-3">
+  {% call card('Secrets &amp; rotation') %}{{ kv([('Stripe customer', tenant.stripe_customer),('Webhook secret age', tenant.hook_secret_age),('BYO API key', tenant.byo_key),('Passkeys', tenant.passkeys),('TOTP', 'on' if tenant.totp else 'off')], dense=True) }}{% endcall %}
+  {% call card('Danger zone') %}<div class="row"><button class="btn btn--secondary btn--sm" data-post="/admin/tenants/{{ tenant.id }}/suspend">Suspend</button><button class="btn btn--danger btn--sm" data-modal="#deleteModal">Delete tenant</button></div>{% endcall %}
+</div>
+{% endblock %}

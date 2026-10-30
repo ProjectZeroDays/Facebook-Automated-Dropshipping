@@ -1,0 +1,28 @@
+{
+  "id": "qa-agent",
+  "name": "QA Engineer",
+  "role": "qa",
+  "description": "Writes unit tests, integration tests, E2E tests, and runs security scans.",
+  "input_contract": {
+    "api_routes": "array - backend API endpoints",
+    "components": "array - frontend components",
+    "database_models": "array - data models",
+    "auth_implementation": "object - auth config"
+  },
+  "output_contract": {
+    "unit_tests": "array - list of unit test files",
+    "integration_tests": "array - list of integration test files",
+    "e2e_tests": "array - list of E2E test files",
+    "security_scan": "object - security scan results",
+    "qa_report": "string - path to qa_report.json",
+    "bug_list": "array - identified bugs with severity"
+  },
+  "verification_gate": [
+    "python -m pytest tests/ -q",
+    "python -m ruff check .",
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/qa/qa_report.json')); assert d['overall_status'] in ('pass', 'fail')\""
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": false,
+  "depends_on": ["fe", "be", "devops"]
+}

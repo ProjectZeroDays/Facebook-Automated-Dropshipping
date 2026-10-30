@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import card, badge, table %}
+{% from "_ui.html" import tabs, kv %}
+{% block title %}Supplier &amp; tool directory{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="page-head"><div><h1>Vendor directory</h1><p class="sub">Suppliers, automation tools and payout rails — with the parts the landing pages skip.</p></div></div>
+<form class="filter-bar" method="get" action="/vendors">
+  <input class="inp" name="q" value="{{ q }}" placeholder="Search vendors…">
+  <select class="inp" name="category"><option value="">All categories</option>{% for c in categories %}<option value="{{ c.key }}" {% if c.key == category %}selected{% endif %}>{{ c.label }}</option>{% endfor %}</select>
+  <select class="inp" name="sort"><option value="rating" {% if sort == 'rating' %}selected{% endif %}>Top rated</option><option value="price" {% if sort == 'price' %}selected{% endif %}>Cheapest</option><option value="fb" {% if sort == 'fb' %}selected{% endif %}>Best for Facebook</option></select>
+  <button class="btn btn--primary">Filter</button>
+</form>
+<div class="grid grid-2 mt-3">
+  {% for v in vendors %}
+  <div class="card vendor"><div class="card-h"><div><strong>{{ v.name }}</strong><div class="sub">{{ v.category_label }} · {{ v.region }}</div></div><div class="ta-r"><div class="stars">{% for i in range(5) %}<span class="{{ 'on' if i < v.rating|round|int else '' }}">★</span>{% endfor %}</div><span class="sub">{{ v.rating }} / 5</span></div></div><div class="card-b"><p>{{ v.summary }}</p><div class="row mt-2">{{ badge(v.pricing, 'accent') }}{{ badge(v.fb_fit, 'info') }}{% if v.ships_from_us %}{{ badge('US warehouses','success') }}{% endif %}</div><div class="grid grid-2 mt-3"><div><h4 class="pro">Pros</h4><ul class="bullets bullets--ok sub">{% for p in v.pros %}<li>{{ p }}</li>{% endfor %}</ul></div><div><h4 class="con">Cons</h4><ul class="bullets bullets--no sub">{% for c in v.cons %}<li>{{ c }}</li>{% endfor %}</ul></div></div>{{ kv([('Payout', v.payout),('Contact', v.contact),('Best for', v.best_for)], dense=True) }}</div><div class="card-f"><a class="btn sm btn--ghost" href="{{ v.docs }}" target="_blank" rel="noopener">Docs</a><a class="btn sm btn--primary" href="{{ v.signup }}" target="_blank" rel="noopener">Sign up</a></div></div>
+  {% else %}<div class="card"><div class="card-b">No vendors match that filter.</div></div>{% endfor %}
+</div>
+<div class="card mt-3"><div class="card-h"><strong>Head to head</strong></div>{% call table(['Vendor','Monthly cost','FB Marketplace fit','Order sync','US stock','Rating']) %}{% for v in vendors %}<tr><td><strong>{{ v.name }}</strong></td><td class="mono">{{ v.pricing }}</td><td>{{ badge(v.fb_fit, v.fb_tone) }}</td><td>{{ 'yes' if v.order_sync else 'manual' }}</td><td>{{ 'yes' if v.ships_from_us else 'no' }}</td><td class="mono">{{ v.rating }}</td></tr>{% endfor %}{% endcall %}</div>
+{% endblock %}

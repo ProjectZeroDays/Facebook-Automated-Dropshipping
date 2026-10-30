@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field, toggle, badge, card, status_badge %}
+{% block title %}Security{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Security</h2>
+<div class="d" style="margin-bottom:18px">Manage passkeys, passwords, 2FA, and recovery options.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Passkeys</strong></div>
+  <div class="card-b">
+    <div class="row">
+      <div><strong>Registered passkeys</strong></div>
+      <div class="ta-r">{{ passkeys|length }} registered</div>
+    </div>
+    <div class="mt-3">
+      {% if passkeys %}
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>Created</th><th>Last used</th><th></th></tr></thead>
+        <tbody>
+          {% for pk in passkeys %}
+          <tr>
+            <td>{{ pk.name }}</td>
+            <td class="sub">{{ pk.created_at }}</td>
+            <td class="sub">{{ pk.last_used or '—' }}</td>
+            <td class="ta-r"><button class="btn sm danger" data-post="/settings/security/passkey/{{ pk.id }}/remove">Remove</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="d" style="padding:16px">No passkeys registered.</div>
+      {% endif %}
+    </div>
+    <button class="btn p mt-3" data-modal="#addPasskeyModal">Add passkey</button>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Two-factor authentication (TOTP)</strong></div>
+  <div class="card-b">
+    <div class="row">
+      <div><strong>TOTP enabled</strong></div>
+      <div class="ta-r">{{ badge('Enabled' if totp_enabled else 'Disabled', totp_enabled and 'success' or 'warn') }}</div>
+    </div>
+    {% if totp_enabled %}
+    <div class="mt-3">
+      <button class="btn sm p" data-post="/settings/security/totp/disable">Disable TOTP</button>
+      <button class="btn sm ghost" data-modal="#showRecoveryModal">Show recovery codes</button>
+    </div>
+    {% else %}
+    <div class="mt-3">
+      <button class="btn p" data-modal="#addTotpModal">Enable TOTP</button>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Password</strong></div>
+  <div class="card-b">
+    <form method="post" action="/settings/security/password" class="mt-3">
+      {{ field('current_password', 'Current password', type='password') }}
+      {{ field('new_password', 'New password', type='password') }}
+      {{ field('confirm_password', 'Confirm new password', type='password') }}
+      <button class="btn p mt-3" type="submit">Change password</button>
+    </form>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Recovery codes</strong></div>
+  <div class="card-b">
+    <div class="d" style="margin-bottom:10px">Recovery codes let you regain access if you lose your 2FA device.</div>
+    <div class="row mt-2">
+      <div><strong>Codes generated</strong></div>
+      <div class="ta-r">{{ recovery_codes|length }} / 8</div>
+    </div>
+    <button class="btn sm p mt-3" data-modal="#showRecoveryModal">View recovery codes</button>
+  </div>
+</div>
+{% endblock %}

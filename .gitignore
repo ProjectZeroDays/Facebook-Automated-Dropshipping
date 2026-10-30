@@ -1,0 +1,39 @@
+# Secrets
+.env
+*.key
+*.pem
+*.secret
+ai_keys.json
+*.enc
+
+# Data and runtime
+data/
+profiles/
+*.sqlite
+*.log
+fb_profile*/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

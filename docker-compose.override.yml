@@ -1,0 +1,43 @@
+# Local dev only. Live code, VNC for first login, Prometheus + Grafana, no cron.
+services:
+  worker:
+    command: ["sleep", "infinity"]
+    volumes:
+      - .:/app
+      - ./data:/app/data
+    environment:
+      TZ: America/Chicago
+    depends_on: [vnc]
+
+  vnc:
+    build: .
+    command: ["vnc"]
+    ports: ["5900:5900"]
+    restart: unless-stopped
+
+  dashboard:
+    command: ["python", "dashboard.py"]
+    environment:
+      FLASK_DEBUG: "1"
+      DASH_USER: admin
+      DASH_PASS: dev
+    volumes:
+      - .:/app
+      - ./data:/app/data
+    ports: ["8080:8080"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes: ["./ops/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+    volumes:
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./data/grafana:/var/lib/grafana
+    ports: ["3000:3000"]
+    depends_on: [prometheus]

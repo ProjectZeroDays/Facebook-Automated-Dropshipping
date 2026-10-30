@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card %}
+{% from "_ui.html" import sparkline, progress, kv %}
+{% block title %}Reports{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="page-head">
+  <div><h1>Reports</h1><p class="sub">Views, saves, sales, and conversion per SKU.</p></div>
+  <div class="row">
+    <button class="btn p" data-post="/reports/export">Export CSV</button>
+  </div>
+</div>
+
+<div class="grid grid-4 mt-3">
+  {{ kpi('Total views', '12,840', '+12%', 'up') }}
+  {{ kpi('Total saves', '2,140', '+8%', 'up') }}
+  {{ kpi('Total sales', '201', '+15%', 'up') }}
+  {{ kpi('Conv. rate', '1.6%', '+0.2%', 'up') }}
+</div>
+
+<div class="grid grid-2 mt-3">
+  {% call card('Top performing SKUs') %}
+    <table class="tbl">
+      <thead><tr><th>SKU</th><th>Product</th><th class="n">Views</th><th class="n">Saves</th><th class="n">Sales</th><th class="n">Conv.</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">PHR-01</td>
+          <td>Pet Hair Remover Roller</td>
+          <td class="mono">890</td>
+          <td class="mono">340</td>
+          <td class="mono">45</td>
+          <td class="mono good">5.1%</td>
+        </tr>
+        <tr>
+          <td class="mono">POS-02</td>
+          <td>Posture Corrector</td>
+          <td class="mono">720</td>
+          <td class="mono">290</td>
+          <td class="mono">38</td>
+          <td class="mono good">5.3%</td>
+        </tr>
+        <tr>
+          <td class="mono">SFD-03</td>
+          <td>Slow Feeder Dog Bowl</td>
+          <td class="mono">650</td>
+          <td class="mono">210</td>
+          <td class="mono">32</td>
+          <td class="mono good">4.9%</td>
+        </tr>
+        <tr>
+          <td class="mono">MPJ-20</td>
+          <td>Mini Projector 1080p</td>
+          <td class="mono">1240</td>
+          <td class="mono">180</td>
+          <td class="mono">12</td>
+          <td class="mono bad">1.0%</td>
+        </tr>
+        <tr>
+          <td class="mono">RBS-05</td>
+          <td>Resistance Band Set</td>
+          <td class="mono">410</td>
+          <td class="mono">150</td>
+          <td class="mono">28</td>
+          <td class="mono good">6.8%</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endcall %}
+  {% call card('Lowest converting') %}
+    <table class="tbl">
+      <thead><tr><th>SKU</th><th>Product</th><th class="n">Views</th><th class="n">Sales</th><th class="n">Conv.</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">MPJ-20</td>
+          <td>Mini Projector 1080p</td>
+          <td class="mono">1240</td>
+          <td class="mono">12</td>
+          <td class="mono bad">1.0%</td>
+          <td class="ta-r"><button class="btn sm ghost">Review</button></td>
+        </tr>
+        <tr>
+          <td class="mono">ARD-16</td>
+          <td>Aroma Diffuser</td>
+          <td class="mono">380</td>
+          <td class="mono">3</td>
+          <td class="mono bad">0.8%</td>
+          <td class="ta-r"><button class="btn sm ghost">Review</button></td>
+        </tr>
+        <tr>
+          <td class="mono">CCV-19</td>
+          <td>Cordless Car Vacuum</td>
+          <td class="mono">290</td>
+          <td class="mono">2</td>
+          <td class="mono bad">0.7%</td>
+          <td class="ta-r"><button class="btn sm ghost">Review</button></td>
+        </tr>
+      </tbody>
+    </table>
+  {% endcall %}
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Sales trend (30 days)</strong></div>
+  <div class="card-b">
+    <svg width="560" height="200" viewBox="0 0 560 200" class="spark-wrap">
+      {{ sparkline([45, 52, 38, 61, 48, 55, 42, 68, 58, 72, 65, 80, 72, 88, 95, 102, 90, 110, 118, 125, 115, 132, 140, 130, 145, 152, 148, 160, 172, 168], 'accent', 560, 200) }}
+    </svg>
+    <div class="sub mt-2">Sales volume over the last 30 days.</div>
+  </div>
+</div>
+{% endblock %}

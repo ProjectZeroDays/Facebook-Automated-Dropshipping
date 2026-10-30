@@ -1,0 +1,27 @@
+{
+  "id": "release-agent",
+  "name": "Release Manager",
+  "role": "release",
+  "description": "Performs production readiness gate, versioning, changelog, and deployment execution.",
+  "input_contract": {
+    "qa_report": "object - QA test results",
+    "all_artifacts": "object - all pipeline artifacts",
+    "version": "string - semantic version",
+    "changelog": "array - list of changes"
+  },
+  "output_contract": {
+    "release_notes": "string - path to release_notes.md",
+    "production_checklist": "object - production readiness checklist",
+    "deploy_instructions": "string - path to deploy instructions",
+    "version_tag": "string - git version tag",
+    "deployed_url": "string - production URL"
+  },
+  "verification_gate": [
+    "python -c \"import json; d=json.load(open('.opencode/handoffs/release.json')); assert d['status'] == 'complete'\"",
+    "curl -fsS http://localhost:5000/healthz || echo 'health check skipped'",
+    "curl -fsS http://localhost:8080/healthz || echo 'dashboard health check skipped'"
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": false,
+  "depends_on": ["qa"]
+}

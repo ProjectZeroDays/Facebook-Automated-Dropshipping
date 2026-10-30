@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card, badge, status_badge, table %}
+{% from "_ui.html" import tabs, progress %}
+{% block title %}Orders{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="page-head">
+  <div><h1>Orders</h1><p class="sub">New, shipped, delivered, and refunded orders.</p></div>
+  <div class="row">
+    <button class="btn p" data-post="/orders/mark-all-shipped">Mark all shipped</button>
+  </div>
+</div>
+
+<div class="grid grid-4 mt-3">
+  {{ kpi('New orders', '4', '2 today', 'up') }}
+  {{ kpi('Shipped', '18', '3 today', 'up') }}
+  {{ kpi('Delivered', '142', '+5 today', 'up') }}
+  {{ kpi('Overdue', '0', 'All clear', 'up') }}
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Orders needing action</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Order</th><th>Item</th><th class="n">Price</th><th>Buyer</th><th>Status</th><th>Tracking</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">#FB-8817</td>
+          <td><strong>Pet Hair Remover Roller</strong></td>
+          <td class="mono">$27.99</td>
+          <td>Maya Reyes</td>
+          <td>{{ status_badge('new') }}</td>
+          <td class="mono">—</td>
+          <td class="ta-r"><button class="btn sm p" data-post="/orders/FB-8817/mark-shipped">Mark shipped</button></td>
+        </tr>
+        <tr>
+          <td class="mono">#FB-8816</td>
+          <td><strong>Posture Corrector</strong></td>
+          <td class="mono">$34.99</td>
+          <td>Ben Diaz</td>
+          <td>{{ status_badge('new') }}</td>
+          <td class="mono">—</td>
+          <td class="ta-r"><button class="btn sm p" data-post="/orders/FB-8816/mark-shipped">Mark shipped</button></td>
+        </tr>
+        <tr>
+          <td class="mono">#FB-8815</td>
+          <td><strong>Slow Feeder Dog Bowl</strong></td>
+          <td class="mono">$29.99</td>
+          <td>Ana Cole</td>
+          <td>{{ status_badge('ordered') }}</td>
+          <td class="mono">1Z999AA10123456784</td>
+          <td class="ta-r"><button class="btn sm ghost" data-post="/orders/FB-8815/mark-shipped">Mark shipped</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Recent orders</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Order</th><th>Item</th><th class="n">Price</th><th>Buyer</th><th>Status</th><th>Tracking</th><th>Date</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">#FB-8814</td>
+          <td>Resistance Band Set</td>
+          <td class="mono">$39.99</td>
+          <td>Cy Park</td>
+          <td>{{ status_badge('shipped') }}</td>
+          <td class="mono">1Z999AA10123456785</td>
+          <td class="sub">2 hours ago</td>
+        </tr>
+        <tr>
+          <td class="mono">#FB-8813</td>
+          <td>Heatless Curling Set</td>
+          <td class="mono">$29.99</td>
+          <td>Dee Ruiz</td>
+          <td>{{ status_badge('delivered') }}</td>
+          <td class="mono">9400100000000000000000</td>
+          <td class="sub">5 hours ago</td>
+        </tr>
+        <tr>
+          <td class="mono">#FB-8812</td>
+          <td>Mini Projector 1080p</td>
+          <td class="mono">$109.99</td>
+          <td>Eli Fox</td>
+          <td>{{ status_badge('delivered') }}</td>
+          <td class="mono">TBA987654321098</td>
+          <td class="sub">1 day ago</td>
+        </tr>
+        <tr>
+          <td class="mono">#FB-8811</td>
+          <td>Portable Blender</td>
+          <td class="mono">$49.99</td>
+          <td>Maya Reyes</td>
+          <td>{{ status_badge('refunded') }}</td>
+          <td class="mono">—</td>
+          <td class="sub">2 days ago</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

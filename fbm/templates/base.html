@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}FBM Ops{% endblock %}</title>
+<style>
+:root{
+  --bg:#0a0c10;--panel:#141821;--fg:#e9ecf1;--muted:#8b94a3;--border:#232a36;
+  --good:#22c55e;--ok:#f59e0b;--bad:#ef4444;--accent:#3b82f6;--chip:#1c212b;
+  --sh-1:0 1px 3px rgba(0,0,0,.3);--sh-2:0 4px 12px rgba(0,0,0,.4);--sh-3:0 8px 24px rgba(0,0,0,.5);
+  --r:10px;--s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;
+}
+html[data-theme=light]{
+  --bg:#f6f7f9;--panel:#fff;--fg:#0f172a;--muted:#64748b;--border:#e2e8f0;
+  --chip:#f1f5f9;--sh-1:0 1px 3px rgba(0,0,0,.08);--sh-2:0 4px 12px rgba(0,0,0,.08);--sh-3:0 8px 24px rgba(0,0,0,.08);
+}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+html,body{
+  height:100%;
+  background:var(--bg);
+  color:var(--fg);
+  font:13.5px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+a{color:inherit;text-decoration:none}
+button{
+  font:inherit;
+  cursor:pointer;
+  background:none;
+  border:none;
+  color:inherit;
+}
+input,select,textarea{
+  font:inherit;
+  width:100%;
+}
+ul,ol{list-style:none}
+
+/* ---------- Layout shell ---------- */
+.shell{
+  display:flex;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  width:252px;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  z-index:50;
+  flex-shrink:0;
+}
+.sidebar .brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:16px 18px;
+  font-weight:700;
+  font-size:15px;
+  border-bottom:1px solid var(--border);
+}
+.sidebar .brand b{color:var(--accent)}
+.sidebar .brand .dot{
+  width:8px;height:8px;background:var(--good);border-radius:50%;box-shadow:0 0 8px var(--good)
+}
+.sidebar nav{
+  flex:1;
+  overflow-y:auto;
+  padding:12px 0;
+}
+.sidebar .nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 16px;
+  color:var(--muted);
+  font-size:13px;
+  border-left:3px solid transparent;
+  transition:all .15s;
+}
+.sidebar .nav-item:hover{
+  background:var(--chip);
+  color:var(--fg);
+}
+.sidebar .nav-item.is-on{
+  background:rgba(59,130,246,.08);
+  color:var(--accent);
+  border-left-color:var(--accent);
+}
+.sidebar .nav-item .nav-ico{width:16px;text-align:center;font-size:12px}
+.sidebar .nav-item .pill{font-size:10px;background:var(--chip);color:var(--muted)}
+.sidebar .divider{
+  height:1px;
+  background:var(--border);
+  margin:8px 16px;
+}
+.sidebar .divider-text{
+  font-size:10px;
+  color:var(--muted);
+  padding:0 16px;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+/* ---------- Main content ---------- */
+.main{
+  flex:1;
+  overflow-y:auto;
+  background:var(--bg);
+  padding:22px;
+}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 0 18px 0;
+}
+.topbar .brand{
+  font-weight:600;
+  font-size:16px;
+  letter-spacing:-.02em;
+}
+.topbar .brand b{color:var(--accent)}
+.topbar .user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 12px;
+  background:var(--chip);
+  border-radius:10px;
+  font-size:12.5px;
+  cursor:pointer;
+}
+.topbar .user .avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600
+}
+.topbar .user .name{font-weight:500}
+.topbar .user .chevron{font-size:10px;color:var(--muted);margin-left:4px}
+
+/* ---------- Nav pills ---------- */
+.nav-pills{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+.nav-pills .pill{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--chip);
+  color:var(--fg);
+  font-size:12.5px;
+  cursor:pointer;
+}
+.nav-pills .pill.is-on{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+.nav-pills .pill .pill-count{
+  font-size:10px;
+  opacity:.7;
+  margin-left:4px;
+}
+
+/* ---------- KPI cards ---------- */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+.kpi{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+}
+.kpi .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kpi .v{font-size:24px;font-weight:700;margin-top:4px}
+.kpi .v.mono{font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--muted);margin-top:4px}
+.kpi .d.ok{color:var(--good)}.kpi .d.bad{color:var(--bad)}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.card .card-h{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.card .card-h .card-title{
+  font-weight:600;
+  font-size:13px;
+}
+.card .card-b{
+  font-size:12.5px;
+  color:var(--fg);
+}
+.card .card-b p.sub{margin-top:6px}
+.card .card-f{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:var(--chip);
+  color:var(--fg);
+  font-size:12.5px;
+  font-weight:500;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.btn:hover{border-color:var(--accent)}
+.btn.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.p:hover{background:#2563eb}
+.btn.ghost{background:transparent}
+.btn.ghost:hover{background:var(--chip)}
+.btn.danger{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.danger:hover{background:#dc2626}
+.btn.sm{padding:6px 12px;font-size:11.5px}
+.btn.lg{padding:11px 18px;font-size:14px}
+.btn.full{width:100%}
+.btn.icon{padding:8px;justify-content:center}
+.btn.disabled{opacity:.5;cursor:not-allowed}
+
+/* ---------- Inputs ---------- */
+.field{margin-bottom:12px}
+.field .lbl{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.inp{
+  background:var(--chip);
+  color:var(--fg);
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:10px 12px;
+  font-size:13px;
+}
+.inp:focus{outline:none;border-color:var(--accent)}
+.field .hint{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.field.is-error .inp{border-color:var(--bad)}
+.field .igroup{display:flex;gap:4px}
+.field .igroup .affix{
+  padding:8px 10px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:var(--chip);
+  font-size:12px;
+  cursor:pointer;
+}
+
+/* ---------- Tables ---------- */
+.tbl{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  font-size:12.5px;
+}
+.tbl th,.tbl td{
+  padding:9px 10px;
+  border-bottom:1px solid var(--border);
+}
+.tbl th{
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--muted);
+  background:var(--chip);
+}
+.tbl tr:last-child td{border:none}
+.tbl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .badge{
+  font-size:10.5px;
+  padding:2px 7px;
+}
+
+/* ---------- Badges ---------- */
+.badge{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  font-size:11px;
+  color:var(--muted);
+}
+.badge--success{color:var(--good);border-color:var(--good)}
+.badge--warn{color:var(--ok);border-color:var(--ok)}
+.badge--danger{color:var(--bad);border-color:var(--bad)}
+.badge--accent{color:var(--accent);border-color:var(--accent)}
+.badge--info{color:var(--info);border-color:var(--info)}
+.badge--solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ---------- Alerts ---------- */
+.alert{
+  display:flex;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  margin-bottom:8px;
+  font-size:12.5px;
+}
+.alert--info{border-color:var(--accent);background:rgba(59,130,246,.08)}
+.alert--success{border-color:var(--good);background:rgba(34,197,94,.08)}
+.alert--warn{border-color:var(--ok);background:rgba(245,158,11,.08)}
+.alert--danger{border-color:var(--bad);background:rgba(239,68,68,.08)}
+.alert-ico{font-weight:700}
+.alert-body{flex:1}
+.alert-x{background:none;border:none;cursor:pointer;font-size:16px;padding:0 4px}
+
+/* ---------- Toasts ---------- */
+.toast-host{
+  position:fixed;
+  bottom:16px;
+  right:16px;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.toast{
+  padding:10px 12px;
+  border-radius:10px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  box-shadow:var(--sh-2);
+  min-width:200px;
+  font-size:12.5px;
+}
+.toast--success{border-color:var(--good)}
+.toast--warn{border-color:var(--ok)}
+.toast--danger{border-color:var(--bad)}
+
+/* ---------- Modals ---------- */
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.4);
+}
+.modal .panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  width:90%;
+  max-width:560px;
+  max-height:90vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.modal .panel .panel-h{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.modal .panel .panel-b{padding:16px;overflow:auto;flex:1}
+.modal .panel .panel-f{
+  padding:12px 16px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+}
+
+/* ---------- Progress bars ---------- */
+.progress-row{margin:6px 0}
+.progress-head{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:4px;
+}
+.progress-head .sub{font-size:11px}
+.progress-head .mono{font-variant-numeric:tabular-nums}
+.bar{
+  height:6px;
+  background:var(--chip);
+  border-radius:4px;
+  overflow:hidden;
+}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.bar--warn i{background:var(--ok)}
+.bar--success i{background:var(--good)}
+
+/* ---------- Misc ---------- */
+.sub{color:var(--muted);font-size:12px}
+.mono{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.hint{font-size:11px;color:var(--muted);margin-top:4px}
+.ta-c{text-align:center}
+.ta-r{text-align:right}
+.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}
+.spinner{
+  width:16px;height:16px;
+  border:2px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.aurora{
+  position:fixed;
+  inset:-20%;
+  width:200%;height:200%;
+  background:linear-gradient(45deg,var(--accent),#8b5cf6,#ec4899,#3b82f6);
+  background-size:400% 400%;
+  animation:aurora 12s ease infinite;
+  opacity:.15;
+  z-index:-1;
+  pointer-events:none;
+}
+@keyframes aurora{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* ---------- Settings / Admin ---------- */
+.setting-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.setting-row:last-child{border:none}
+.setting-row .label{font-size:12.5px}
+.setting-row .desc{font-size:11px;color:var(--muted);margin-top:2px}
+.kv-row{
+  display:flex;
+  justify-content:space-between;
+  padding:7px 0;
+  border-bottom:1px solid var(--border);
+  font-size:12.5px;
+}
+.kv-row dt{color:var(--muted);font-size:11.5px}
+.kv-row dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+{% include "_bg.html" %}
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="dot"></span>
+      FBM <b>Ops</b>
+    </div>
+    <nav>
+      {% block sidebar %}
+      <a class="nav-item {% if active == 'overview' %}is-on{% endif %}" href="/">
+        <span class="nav-ico">▦</span><span>Overview</span>
+      </a>
+      <a class="nav-item {% if active == 'comps' %}is-on{% endif %}" href="/comps">
+        <span class="nav-ico">▤</span><span>Comps</span>
+      </a>
+      <a class="nav-item {% if active == 'listings' %}is-on{% endif %}" href="/listings">
+        <span class="nav-ico">▧</span><span>Listings</span>
+      </a>
+      <a class="nav-item {% if active == 'orders' %}is-on{% endif %}" href="/orders">
+        <span class="nav-ico">▥</span><span>Orders</span>
+      </a>
+      <a class="nav-item {% if active == 'skus' %}is-on{% endif %}" href="/skus">
+        <span class="nav-ico">▨</span><span>SKUs</span>
+      </a>
+      <a class="nav-item {% if active == 'pnl' %}is-on{% endif %}" href="/pnl">
+        <span class="nav-ico">$</span><span>P&L</span>
+      </a>
+      <a class="nav-item {% if active == 'events' %}is-on{% endif %}" href="/events">
+        <span class="nav-ico">▫</span><span>Events</span>
+      </a>
+      <div class="divider"></div>
+      <div class="divider-text">System</div>
+      <a class="nav-item {% if active == 'settings' %}is-on{% endif %}" href="/settings">
+        <span class="nav-ico">⚙</span><span>Settings</span>
+      </a>
+      <a class="nav-item {% if active == 'admin' %}is-on{% endif %}" href="/admin">
+        <span class="nav-ico">🛡</span><span>Admin</span>
+      </a>
+      <a class="nav-item {% if active == 'bot' %}is-on{% endif %}" href="/bot">
+        <span class="nav-ico">🤖</span><span>Bot</span>
+      </a>
+      <div class="divider"></div>
+      <div class="divider-text">Account</div>
+      <a class="nav-item {% if active == 'profile' %}is-on{% endif %}" href="/profile">
+        <span class="nav-ico">👤</span><span>Profile</span>
+      </a>
+      {% if session.get('admin') %}
+      <a class="nav-item {% if active == 'users' %}is-on{% endif %}" href="/admin/users">
+        <span class="nav-ico">👥</span><span>Users</span>
+      </a>
+      {% endif %}
+      <a class="nav-item ghost" href="/logout">
+        <span class="nav-ico">🚪</span><span>Sign out</span>
+      </a>
+      {% endblock %}
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div class="brand">FBM <b>{% block title_short %}Ops{% endblock %}</b></div>
+      <div class="sp"></div>
+      <div class="user">
+        <div class="avatar">{{ user_initials }}</div>
+        <div>
+          <div class="name">{{ session.get('email','User') }}</div>
+          <div class="chevron">▾</div>
+        </div>
+      </div>
+    </header>
+
+    {% block body %}{% endblock %}
+  </main>
+</div>
+
+{% include "_chat.html" %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

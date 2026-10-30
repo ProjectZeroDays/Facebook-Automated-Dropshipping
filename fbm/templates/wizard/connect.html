@@ -1,0 +1,13 @@
+{% extends "wizard/_layout.html" %}
+{% block title %}Connect Facebook{% endblock %}
+{% block content %}
+<h1>Connect your Facebook profile</h1>
+<p class="sub">One headful login over VNC. The profile lock takes over afterwards.</p>
+<div class="card mt-3"><div class="card-b">
+  <p>Open a VNC session, log in to Facebook once, then come back here.</p>
+  <div class="row mt-2">
+    <a class="btn btn--primary" href="/settings/profile/vnc">Open VNC session</a>
+    <button class="btn btn--secondary" data-post="/wizard/connect/check">I'm logged in</button>
+  </div>
+</div></div>
+{% endblock %}

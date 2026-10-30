@@ -1,0 +1,14 @@
+{% extends "wizard/_layout.html" %}{% block step %}
+<h2>Pick a plan</h2>
+<p class="d">7-day trial. Cancel anytime. Start smallest — upgrade later.</p>
+<div class="grid2" style="margin-top:14px">
+  {% for key, p in plans.items() %}
+  <label class="card" style="cursor:pointer;margin:0">
+    <input type="radio" name="plan" value="{{ key }}" {{ 'checked' if key=='pro' }}>
+    <b>{{ key|capitalize }}</b> — ${{ p.price }}/mo
+    <div class="d">{{ p.accounts }} account(s)</div>
+    <ul class="d" style="padding-left:16px">{% for f in p.features %}<li>{{ f }}</li>{% endfor %}</ul>
+  </label>
+  {% endfor %}
+</div>
+{% endblock %}

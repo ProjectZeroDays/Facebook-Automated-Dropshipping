@@ -1,0 +1,48 @@
+"""
+fbm/login_once.py — one-time headful login, then calibrate selectors.
+
+  python -m fbm.login_once            # login + calibrate create page
+  python -m fbm.login_once --orders   # also calibrate the orders page
+"""
+from __future__ import annotations
+import argparse, json
+from playwright.sync_api import sync_playwright
+from fbm import core as C
+
+CREATE_URL = "https://www.facebook.com/marketplace/create/item"
+ORDERS_URL = "https://www.facebook.com/marketplace/you/selling"
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--orders", action="store_true")
+    args = ap.parse_args()
+
+    C.load_env()
+    with C.profile_lock():
+        with sync_playwright() as p:
+            ctx = p.chromium.launch_persistent_context(
+                C.PROFILE_DIR, headless=False,
+                viewport={"width": 1366, "height": 900},
+                user_agent=C.USER_AGENT,
+                args=["--disable-blink-features=AutomationControlled"])
+            page = ctx.pages[0] if ctx.pages else ctx.new_page()
+            C.ensure_logged_in(page)
+
+            print("[calibrate] create page...")
+            page.goto(CREATE_URL, wait_until="domcontentloaded"); C.dismiss_modals(page)
+            res = C.calibrate(page, keys=["title", "price", "description", "category",
+                                          "condition", "next", "publish", "file_input"])
+            print(json.dumps(res, indent=2))
+
+            if args.orders:
+                print("[calibrate] orders page...")
+                page.goto(ORDERS_URL, wait_until="domcontentloaded"); C.dismiss_modals(page)
+                print(json.dumps(C.calibrate(page, keys=["renew", "more_options"]), indent=2))
+
+            print("done. selectors.json written. profile stays logged in.")
+            ctx.close()
+
+
+if __name__ == "__main__":
+    main()

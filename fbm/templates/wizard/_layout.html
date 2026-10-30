@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block topnav %}<a class="pill" href="/settings">Skip to app</a>{% endblock %}
+{% block body %}
+<div class="wizbar">
+  {% for s in steps %}
+    <span class="dot {{ 'on' if loop.index0 <= steps.index(step) }}">{{ loop.index }}</span>
+    {% if not loop.last %}<span class="rail {{ 'on' if loop.index0 < steps.index(step) }}"></span>{% endif %}
+  {% endfor %}
+</div>
+<form method="post" action="/wizard?step={{ step }}">
+  {% block step %}{% endblock %}
+  <div class="nav">
+    {% if steps.index(step) > 0 %}
+      <a class="pill" href="/wizard?step={{ steps[steps.index(step)-1] }}">Back</a>
+    {% else %}<span></span>{% endif %}
+    {% if step == 'bot' %}
+      <button class="p" formaction="/wizard/finish" type="submit">Finish setup</button>
+    {% else %}
+      <button class="p" type="submit">Continue</button>
+    {% endif %}
+  </div>
+</form>
+<style>
+.wizbar{display:flex;align-items:center;gap:6px;margin-bottom:18px}
+.wizbar .dot{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:grid;
+  place-items:center;font-size:11px;color:var(--muted);background:var(--panel)}
+.wizbar .dot.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.wizbar .rail{flex:1;height:2px;background:var(--border)}
+.wizbar .rail.on{background:var(--accent)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+</style>
+{% endblock %}

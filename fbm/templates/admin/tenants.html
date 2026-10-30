@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "_macros.html" import card, table %}
+{% block title %}Tenants{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Tenants</h1></div></div>
+<div class="card mt-3">{% call table(['Name','Plan','State']) %}
+{% for t in tenants %}<tr><td>{{ t.name }}</td><td>{{ t.plan }}</td><td>{{ t.state }}</td></tr>{% endfor %}
+{% else %}<tr><td colspan="3" class="tbl-empty">No tenants.</td></tr>{% endcall %}</div>
+{% endblock %}

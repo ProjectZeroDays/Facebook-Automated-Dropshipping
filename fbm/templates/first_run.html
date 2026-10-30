@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}First run{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>First run checklist</h2>
+<div class="d" style="margin-bottom:18px">This page ticks itself off as the automation does its work. Leave it open.</div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>{{ s.done }} of {{ s.total }} complete</b><span class="pill">{{ s.percent }}%</span></div><div style="height:7px;background:var(--chip);border-radius:4px;overflow:hidden;margin-top:8px"><div style="height:100%;width:{{ s.percent }}%;background:var(--good);transition:width .4s"></div></div></div>{% for step in s.steps %}<div class="row"><div><div>{{ '�o"' if step.done else '�-<' }} <b>{{ step.label }}</b></div><div class="d">{{ step.help }}</div></div><span class="pill {{ 'ok' if step.done }}">{{ 'done' if step.done else 'waiting' }}</span></div>{% endfor %}{% if s.next %}<div class="card" style="margin-top:14px"><b>Next: {{ s.next.label }}</b><div class="d">{{ s.next.help }}</div><a class="pill" style="margin-top:8px" href="/wizard?step={{ s.next.key }}">Do this now</a></div>{% else %}<div class="card ok" style="margin-top:14px"><b>All set - the machine is running.</b></div>{% endif %}<p class="d" style="margin-top:14px"><a href="/">Go to the dashboard</a> �?" this keeps updating in the background.</p>
+{% endblock %}

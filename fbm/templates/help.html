@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% from "_macros.html" import card, badge %}
+{% from "_ui.html" import tabs, alert, kv %}
+{% block title %}Help{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="page-head">
+  <div><h1>Help</h1><p class="sub">Search, read, or hand it to the bot.</p></div>
+  <div class="row">
+    <button class="btn btn--secondary" data-bug>Report a bug</button>
+    <button class="btn btn--primary" data-bot-open>Ask the bot</button>
+  </div>
+</div>
+
+<form class="filter-bar" method="get" action="/help">
+  <input class="inp" name="q" value="{{ q }}" placeholder="Search articles — 'selector drift', 'renew', 'tracking'…">
+  <button class="btn btn--primary">Search</button>
+</form>
+
+{% if q %}
+<div class="card mt-3">
+  <div class="card-h"><strong>{{ results|length }} result{{ '' if results|length == 1 else 's' }} for "{{ q }}"</strong></div>
+  <div class="card-b">
+    {% for r in results %}
+    <a class="list-row list-row--link" href="/help/{{ r.slug }}">
+      <div><strong>{{ r.title }}</strong><div class="sub">{{ r.excerpt }}</div></div><span class="badge">{{ r.category }}</span></a>
+    {% else %}
+    <p class="sub">Nothing matched. <button class="btn btn--link" data-bot-open>Ask the bot instead →</button></p>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="grid grid-4 mt-3">
+  {% for c in categories %}
+  <a class="card cat" href="/help/c/{{ c.key }}">
+    <div class="card-b"><span class="cat-ico">{{ c.icon }}</span><strong>{{ c.label }}</strong><div class="sub">{{ c.count }} articles</div></div>
+  </a>
+  {% endfor %}
+</div>
+
+<div class="grid grid-2 mt-3">
+  {% call card('Popular articles') %}
+    {% for a in popular %}
+    <a class="list-row list-row--link" href="/help/{{ a.slug }}"><span>{{ a.title }}</span><span class="sub">{{ a.views }} views</span></a>
+    {% endfor %}
+  {% endcall %}
+  {% call card('System status', badge=badge('all systems normal','success')) %}
+    {{ kv([('Facebook automation', 'operational'),('Listing engine', 'operational'),('Tracking intake', 'operational'),('Billing webhooks', 'operational'),('Local model', 'operational')], dense=True) }}
+    <div class="row mt-3"><a class="btn btn--secondary btn--sm" href="/status">Status page</a><a class="btn btn--ghost btn--sm" href="/status/history">Incident history</a></div>
+  {% endcall %}
+</div>
+{% endblock %}

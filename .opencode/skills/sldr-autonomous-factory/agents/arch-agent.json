@@ -1,0 +1,27 @@
+{
+  "id": "arch-agent",
+  "name": "System Architect",
+  "role": "arch",
+  "description": "Designs database schema, API contracts, directory structure, and security model.",
+  "input_contract": {
+    "prd": "object - product requirements document",
+    "tech_stack": "object - selected technology stack",
+    "database_preference": "string - preferred database",
+    "auth_requirement": "boolean - authentication needed",
+    "deployment_target": "string - deployment target"
+  },
+  "output_contract": {
+    "architecture": "string - path to architecture.md",
+    "schema_sql": "string - path to database schema",
+    "api_contracts": "object - OpenAPI/REST endpoint definitions",
+    "directory_structure": "object - project folder layout",
+    "security_model": "object - auth, RBAC, CSRF, CORS config"
+  },
+  "verification_gate": [
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/arch/architecture.json')); assert 'database' in d\"",
+    "python -c \"import json; d=json.load(open('.opencode/artifacts/arch/api_contracts.json')); assert len(d) > 0\""
+  ],
+  "model": "claude-3.5-sonnet",
+  "parallel": false,
+  "depends_on": ["pa"]
+}

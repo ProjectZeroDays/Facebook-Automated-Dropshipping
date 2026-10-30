@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_macros.html" import kpi, card, badge, table %}
+{% from "_ui.html" import alert, progress, kv, secret_field %}
+{% block title %}Refer &amp; earn{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="page-head"><div><h1>Refer &amp; earn</h1><p class="sub">$25 credit for you, $25 for them. Yours lands on their first paid invoice.</p></div>
+  <button class="btn btn--primary" data-copy="{{ share.url }}">Copy invite link</button>
+</div>
+<div class="grid grid-4 mt-3">
+  {{ kpi('Invites sent', stats.sent, '', 'up') }}
+  {{ kpi('Signed up', stats.signed_up, stats.conversion ~ '% conversion', 'up') }}
+  {{ kpi('Credits earned', '$' ~ stats.earned, stats.pending ~ ' pending', 'up') }}
+  {{ kpi('Months free', stats.free_months, 'at $' ~ stats.price ~ '/mo', 'up') }}
+</div>
+<div class="grid grid-2 mt-3">
+  {% call card('Your link') %}
+    {{ secret_field('referral_url', share.url, 'Invite URL', False) }}
+    <div class="row mt-3">
+      <div class="qr">{{ share.qr_svg|safe }}</div>
+      <div><p class="sub">Code <code class="mono">{{ share.code }}</code></p><p class="sub">Lands on a branded signup with the invite pre-applied.</p></div>
+    </div>
+  {% endcall %}
+  {% call card('Progress to next reward') %}
+    {{ progress(stats.this_month, stats.monthly_cap, 'accent', 'Credits this month') }}
+    <p class="sub mt-2">Cap is {{ stats.monthly_cap }} per month.</p>
+    {{ kv([('Self-referral guard','on'),('Duplicate email guard','on'),('Monthly cap', stats.monthly_cap)], dense=True) }}
+  {% endcall %}
+</div>
+<div class="card mt-3">
+  <div class="card-h"><strong>Your referrals</strong></div>
+  {% call table(['Email','Signed up','Status','Credit','']) %}
+    {% for r in referrals %}
+    <tr><td>{{ r.email_masked }}</td><td class="sub">{{ r.created }}</td><td>{{ badge(r.status, r.tone) }}</td><td class="mono">{{ '$' ~ r.credit if r.credit else '—' }}</td><td class="ta-r">{% if r.status == 'pending' %}<button class="btn sm btn--ghost" data-post="/refer/{{ r.id }}/nudge">Nudge</button>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="5" class="tbl-empty">No referrals yet. Share your link to start.</td></tr>{% endfor %}
+  {% endcall %}
+</div>
+{% endblock %}

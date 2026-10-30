@@ -1,0 +1,30 @@
+{
+  "spocket": {
+    "kind": "api",
+    "url": "",
+    "key_env": "SPOCKET_API_KEY",
+    "rma": "email"
+  },
+  "zendrop": {
+    "kind": "api",
+    "url": "",
+    "key_env": "ZENDROP_API_KEY",
+    "rma": "dashboard"
+  },
+  "cj": {
+    "kind": "api",
+    "url": "",
+    "key_env": "CJ_API_KEY",
+    "rma": "dashboard"
+  },
+  "dropcommerce": {
+    "kind": "api",
+    "url": "",
+    "key_env": "DROPCOMMERCE_API_KEY",
+    "rma": "email"
+  },
+  "manual": {
+    "kind": "manual",
+    "rma": "email supplier"
+  }
+}

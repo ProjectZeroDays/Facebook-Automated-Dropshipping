@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_macros.html" import table, badge, status_badge, card %}
+{% block title %}Webhook Events{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<h2>Webhook Events</h2>
+<div class="d" style="margin-bottom:18px">Inspect and replay Stripe, supplier, and platform webhooks.</div>
+
+<div class="card">
+  <div class="card-h"><strong>Recent webhook events</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>Time</th><th>Type</th><th>Status</th><th>Attempts</th><th>Tenant</th><th></th></tr></thead>
+      <tbody>
+        {% for e in events %}
+        <tr>
+          <td class="sub mono">{{ e.received }}</td>
+          <td class="mono">{{ e.type }}</td>
+          <td>{{ status_badge(e.state) }}</td>
+          <td>{{ e.attempts }}</td>
+          <td>{{ e.tenant_id or 'system' }}</td>
+          <td class="ta-r">
+            {% if e.state == 'failed' %}
+            <button class="btn sm ghost" data-post="/admin/webhooks/{{ e.id }}/replay">Replay</button>
+            {% else %}
+            <button class="btn sm ghost" disabled>Replayed</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="tbl-empty">No webhook events.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-h"><strong>Webhook endpoints</strong></div>
+  <div class="card-b">
+    <table class="tbl">
+      <thead><tr><th>URL</th><th>Events</th><th>Secret</th><th>Last delivery</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">https://api.fbm.local/stripe/webhook</td>
+          <td>invoice.paid, invoice.payment_failed, customer.subscription.deleted</td>
+          <td class="sub mono">whsec_••••••••</td>
+          <td class="sub">2 min ago</td>
+          <td class="ta-r"><button class="btn sm ghost">Test</button></td>
+        </tr>
+        <tr>
+          <td class="mono">https://api.fbm.local/supplier/webhook</td>
+          <td>order.shipped, order.failed, tracking.updated</td>
+          <td class="sub mono">whsec_••••••••</td>
+          <td class="sub">Never</td>
+          <td class="ta-r"><button class="btn sm ghost">Test</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

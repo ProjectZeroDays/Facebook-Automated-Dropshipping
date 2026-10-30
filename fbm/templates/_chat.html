@@ -1,0 +1,76 @@
+<div id="chatFab" onclick="chatToggle()" title="Assistant">✦</div>
+<div id="chatWin" hidden>
+  <header>
+    <b>Assistant</b><span class="sp"></span>
+    <button onclick="chatExplain()" title="Explain this screen">?</button>
+    <button onclick="chatMin()" title="Minimise">–</button>
+  </header>
+  <div id="chatLog"></div>
+  <div id="chatAttach" class="att"></div>
+  <footer>
+    <label class="clip">📎<input type="file" multiple hidden onchange="chatUpload(this)"></label>
+    <input id="chatIn" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')chatSend()">
+    <button id="mic" onclick="chatMic()" title="Voice">🎤</button>
+    <button class="p" onclick="chatSend()">Send</button>
+  </footer>
+</div>
+<style>
+#chatFab{position:fixed;right:20px;bottom:20px;width:52px;height:52px;border-radius:50%;
+  background:var(--accent);color:#fff;display:grid;place-items:center;font-size:22px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:9999}
+#chatWin{position:fixed;right:20px;bottom:84px;width:380px;max-width:92vw;height:520px;max-height:72vh;
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;display:flex;
+  flex-direction:column;z-index:9999;overflow:hidden}
+#chatWin header{display:flex;align-items:center;gap:6px;padding:10px 12px;
+  border-bottom:1px solid var(--border);font-size:12.5px}
+#chatWin header .sp{flex:1}
+#chatWin header button{background:none;border:none;color:var(--fg);cursor:pointer;font-size:13px}
+#chatLog{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:86%;padding:8px 11px;border-radius:11px;font-size:12.5px;line-height:1.5;white-space:pre-wrap}
+.msg.u{align-self:flex-end;background:var(--accent);color:#fff}
+.msg.a{align-self:flex-start;background:var(--chip);border:1px solid var(--border)}
+#chatWin footer{display:flex;gap:6px;padding:9px;border-top:1px solid var(--border)}
+#chatIn{flex:1;background:var(--chip);color:var(--fg);border:1px solid var(--border);
+  border-radius:9px;padding:8px 10px;font:inherit;font-size:12.5px}
+#chatWin footer button{background:var(--chip);color:var(--fg);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;cursor:pointer;font-size:12px}
+#chatWin footer button.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.clip{cursor:pointer;padding:7px 9px;border:1px solid var(--border);border-radius:9px}
+#mic.rec{background:var(--bad);color:#fff;border-color:var(--bad)}
+.att{font-size:11px;color:var(--muted);padding:0 12px 6px}
+</style>
+<script>
+let chatFiles=[],chatRec=null;
+function chatToggle(){const w=document.getElementById('chatWin');w.hidden=!w.hidden;}
+function chatMin(){document.getElementById('chatWin').hidden=true;}
+function chatAdd(role,text){const l=document.getElementById('chatLog');const d=document.createElement('div');
+  d.className='msg '+role;d.textContent=text;l.appendChild(d);l.scrollTop=l.scrollHeight;}
+function chatUpload(i){for(const f of i.files)chatFiles.push(f);
+  document.getElementById('chatAttach').textContent='📎 '+chatFiles.map(f=>f.name).join(', ');}
+function chatExplain(){document.getElementById('chatIn').value='Explain everything on this screen and what I can do here';chatSend();}
+function chatMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice input needs Chrome/Edge/Safari');return;}
+  if(chatRec){chatRec.stop();return;}
+  chatRec=new SR();chatRec.lang='en-US';chatRec.interimResults=true;
+  document.getElementById('mic').classList.add('rec');
+  chatRec.onresult=e=>document.getElementById('chatIn').value=[...e.results].map(r=>r[0].transcript).join('');
+  chatRec.onend=()=>{chatRec=null;document.getElementById('mic').classList.remove('rec');};
+  chatRec.start();
+}
+async function chatSend(){
+  const inp=document.getElementById('chatIn'),text=inp.value.trim();
+  if(!text&&!chatFiles.length)return;
+  chatAdd('u',text||'(attachment)');inp.value='';
+  const fd=new FormData();fd.append('text',text);chatFiles.forEach(f=>fd.append('files',f));
+  chatFiles=[];document.getElementById('chatAttach').textContent='';
+  const pending=document.createElement('div');pending.className='msg a';pending.textContent='…';
+  document.getElementById('chatLog').appendChild(pending);
+  try{
+    const r=await fetch('/chat/send',{method:'POST',body:fd}).then(r=>r.json());
+    pending.remove();chatAdd('a',r.reply);
+  }catch(e){pending.remove();chatAdd('a','Could not reach the server.');}
+}
+window.addEventListener('load',()=>{if(!localStorage.getItem('chatSeen')){
+  setTimeout(()=>{chatToggle();chatAdd('a','Hi! I can explain any screen, check your numbers, or answer product questions. Try “explain this screen”, or drop a file in.');localStorage.setItem('chatSeen','1');},2000);}});
+</script>

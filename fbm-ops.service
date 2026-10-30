@@ -1,0 +1,21 @@
+[Unit]
+Description=FBM Ops - Autonomous Facebook Marketplace Dropshipping
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/app
+EnvironmentFile=/app/.env
+ExecStart=/usr/bin/python3 -m fbm.daemon start
+ExecStop=/usr/bin/python3 -m fbm.daemon stop
+ExecReload=/usr/bin/python3 -m fbm.daemon restart
+Restart=always
+RestartSec=10
+User=fbm
+Group=fbm
+Environment=PYTHONUNBUFFERED=1
+Environment=DISPLAY=:99
+
+[Install]
+WantedBy=multi-user.target

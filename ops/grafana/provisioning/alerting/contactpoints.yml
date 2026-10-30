@@ -1,0 +1,14 @@
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: fbm-webhook
+    receivers:
+      - uid: fbm-hook
+        type: webhook
+        settings: { url: "$ALERT_WEBHOOK" }
+policies:
+  - orgId: 1
+    receiver: fbm-webhook
+    group_by: ["alertname"]
+    group_wait: 30s
+    repeat_interval: 4h
