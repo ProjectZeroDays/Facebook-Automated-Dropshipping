@@ -23,7 +23,8 @@ PLANS = {
                              "supplier_failover", "priority_support"]},
     "agency":  {"price": 199, "profiles": 10, "listings": None,
                 "features": ["10_profiles", "unlimited_listings",
-                             "api_access", "white_label", "named_support"]},
+                             "api_access", "white_label", "named_support",
+                             "gmv_percent_billing"]},
 }
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
