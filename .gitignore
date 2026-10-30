@@ -26,6 +26,7 @@ ENV/
 dist/
 build/
 .pytest_cache/
+.pytest_tmp/
 .mypy_cache/
 
 # Node
