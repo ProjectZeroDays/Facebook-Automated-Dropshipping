@@ -399,6 +399,19 @@ def init_db():
             id TEXT PRIMARY KEY, title TEXT, last_msg TEXT, intent TEXT,
             replied_at TEXT, seen_at TEXT DEFAULT CURRENT_TIMESTAMP,
             tenant_id TEXT NOT NULL DEFAULT 'default');
+        CREATE TABLE IF NOT EXISTS subscriptions(
+            tenant_id TEXT PRIMARY KEY, plan TEXT DEFAULT 'starter',
+            amount REAL DEFAULT 0, status TEXT DEFAULT 'active',
+            period_end TEXT, stripe_customer TEXT, stripe_sub TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+        CREATE TABLE IF NOT EXISTS dunning(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, tenant_id TEXT,
+            attempt INTEGER DEFAULT 1, next_retry TEXT, status TEXT DEFAULT 'active',
+            last_failure TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+        CREATE TABLE IF NOT EXISTS gmv_ledger(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, tenant_id TEXT,
+            order_fp TEXT, amount REAL, fee REAL, period TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP);
         CREATE TABLE IF NOT EXISTS webhook_events(
             event_id TEXT PRIMARY KEY, event_type TEXT, processed_at TEXT DEFAULT CURRENT_TIMESTAMP);
         CREATE TABLE IF NOT EXISTS processed_events(
@@ -406,6 +419,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS invoices(
             invoice_id TEXT PRIMARY KEY, tenant_id TEXT, amount REAL,
             status TEXT DEFAULT 'open', stripe_invoice_id TEXT, due_date TEXT,
+            plan TEXT, gmv_fee REAL,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP);
         CREATE TABLE IF NOT EXISTS payment_failures(
             id INTEGER PRIMARY KEY AUTOINCREMENT, tenant_id TEXT, failure_count INTEGER DEFAULT 0,

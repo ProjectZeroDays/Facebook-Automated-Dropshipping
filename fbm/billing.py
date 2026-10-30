@@ -38,7 +38,7 @@ PRICE_IDS = {
     "agency": STRIPE_PRICE_AGENCY,
 }
 
-DUNNING_MAX_RETRIES = 3
+DUNNING_MAX_RETRIES = 5
 DUNNING_INTERVALS_HOURS = [1, 6, 24, 72]
 
 
@@ -259,10 +259,15 @@ def get_dunning_status(tenant_id: str) -> dict:
             "ORDER BY attempt DESC LIMIT 1",
             (tenant_id,)).fetchone()
         if not row:
-            return {"status": "none", "attempt": 0,
-                    "next_retry": None}
-        return {"status": row[5], "attempt": row[2],
-                "next_retry": row[3]}
+            row = c.execute(
+                "SELECT * FROM dunning WHERE tenant_id=? "
+                "ORDER BY attempt DESC LIMIT 1", (tenant_id,)).fetchone()
+        if not row:
+            return {"status": "none", "attempt": 0, "next_retry": None}
+        d = dict(row)
+        return {"status": d.get("status", "none"),
+                "attempt": d.get("attempt", 0),
+                "next_retry": d.get("next_retry")}
 
 
 def clear_dunning(tenant_id: str):
@@ -489,7 +494,7 @@ def get_subscription(tenant_id: str) -> dict | None:
     with C.db() as c:
         row = c.execute(
             "SELECT * FROM subscriptions WHERE tenant_id=? "
-            "AND status IN ('active','trialing')",
+            "ORDER BY created_at DESC LIMIT 1",
             (tenant_id,)).fetchone()
         return dict(row) if row else None
 
