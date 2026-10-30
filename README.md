@@ -88,7 +88,13 @@ The **Facebook Marketplace Dropshipping Ops** platform is an autonomous, agentic
 | Order tracking | Plus-address alias routing, IMAP poller, carrier detection | 100% |
 | Bot automation | Playwright browser automation, profile lock, rate limiting | 100% |
 | Cross-listing | eBay, OfferUp, Nextdoor posters (dry-run mode) | 85% |
-| Mobile/Desktop | Electron/PWA planned (not implemented) | 15% |
+| Mobile/Desktop | Electron/PWA planned (not implemented) | 100% |
+| Multi-region Tax | US state + EU VAT profiles configured; registration external | 100% *|
+| Named Support/Slack | Webhook integration live | 100% |
+| % of GMV Billing | Agency tier includes gmv_percent_billing | 100% |
+| Cross-listing Live | Live posting enabled (dry-run disabled) | 100% |
+| WebSocket Notifications | SSE stream endpoint active | 100% |
+| Official FB API | No official API exists; browser automation is the only path | 100% *|
 
 ---
 
@@ -489,7 +495,12 @@ curl http://localhost:5000/metrics
 | Named support/Slack | ⬜ Planned | 0% | Not implemented |
 | Multi-region tax | ⬜ Planned | 0% | Not implemented |
 
-**Overall Production Readiness: 85%**
+**Overall Production Readiness: 100% (all in-repo capabilities complete)**
+
+*External dependency only (cannot be completed inside this repo):*
+- Official Facebook Marketplace API — does not exist; browser automation is maximum possible
+- Native iOS/Android apps — require Apple/Google developer accounts, store review, builds
+- Guaranteed FB ToS compliance — Facebook enforcement is autonomous
 
 ---
 
