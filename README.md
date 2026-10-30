@@ -203,7 +203,7 @@ Every handoff passes through automated gates:
 
 ```powershell
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/Facebook-Automated-Dropshipping.git
+git clone https://github.com/ProjectZeroDays/Facebook-Automated-Dropshipping.git
 cd Facebook-Automated-Dropshipping
 
 # Run one-click deployment
@@ -214,7 +214,7 @@ cd Facebook-Automated-Dropshipping
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/Facebook-Automated-Dropshipping.git
+git clone https://github.com/ProjectZeroDays/Facebook-Automated-Dropshipping.git
 cd Facebook-Automated-Dropshipping
 
 # Make executable and run
@@ -225,7 +225,7 @@ chmod +x deploy_local.sh
 ### Option 3: VPS Deployment (Docker Compose)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Facebook-Automated-Dropshipping.git
+git clone https://github.com/ProjectZeroDays/Facebook-Automated-Dropshipping.git
 cd Facebook-Automated-Dropshipping
 
 chmod +x deploy_vps.sh
@@ -706,7 +706,7 @@ Paste relevant logs from `data/daemon/logs/*.log` or browser console.
 If applicable, add screenshots.
 ```
 
-Submit bugs via GitHub Issues: `https://github.com/YOUR_USERNAME/Facebook-Automated-Dropshipping/issues`
+Submit bugs via GitHub Issues: `https://github.com/ProjectZeroDays/Facebook-Automated-Dropshipping/issues`
 
 ---
 
