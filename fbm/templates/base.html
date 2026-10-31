@@ -22,15 +22,25 @@ html[data-theme=light]{
 html,body{
   height:100%;
   background:linear-gradient(160deg,#0b0d12 0%,#11131a 100%);
+  background-attachment:fixed;
   color:var(--fg);
   font:var(--font-base)/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
+/* Subtle texture overlay for depth */
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:.035;
+  background-image:radial-gradient(circle at 2px 2px, rgba(255,255,255,.4) 1px, transparent 0); background-size:40px 40px;
+}
 a{color:inherit;text-decoration:none}
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:2px solid var(--accent); outline-offset:2px; border-radius:6px;
+}
 button{
-  font:inherit;
-  cursor:pointer;
-  background:none;
+  font:inherit; cursor:pointer; background:none; border:none;
+  transition:transform .08s ease, box-shadow .15s ease, filter .15s ease;
+}
   border:none;
   color:inherit;
 }
@@ -95,13 +105,14 @@ ul,ol{list-style:none}
   transition:all .15s;
 }
 .sidebar .nav-item:hover{
-  background:var(--chip);
+  background:linear-gradient(90deg,var(--chip),rgba(255,255,255,.03));
   color:var(--fg);
 }
 .sidebar .nav-item.is-on{
-  background:rgba(59,130,246,.08);
-  color:var(--accent);
+  background:linear-gradient(90deg,rgba(99,102,241,.12),rgba(99,102,241,.06));
+  color:#fff;
   border-left-color:var(--accent);
+  font-weight:500;
 }
 .sidebar .nav-item .nav-ico{width:16px;text-align:center;font-size:12px}
 .sidebar .nav-item .pill{font-size:10px;background:var(--chip);color:var(--muted)}
@@ -266,6 +277,15 @@ ul,ol{list-style:none}
 .btn.full{width:100%}
 .btn.icon{padding:8px;justify-content:center}
 .btn.disabled{opacity:.5;cursor:not-allowed}
+
+/* Mobile sidebar overlay */
+@media (max-width: 768px){
+  .shell{flex-direction:column;height:100vh;overflow:hidden}
+  .sidebar{position:fixed;left:0;top:0;height:100vh;z-index:100;border-right:0;
+    width:260px;transform:translateX(-100%);transition:transform .3s ease,opacity .25s ease;opacity:1}
+  .shell:not(.sidebar-collapsed) .sidebar{transform:translateX(0)}
+  .main{margin-top:58px;height:calc(100vh - 58px);overflow-y:auto}
+}
 
 /* ---------- Inputs ---------- */
 .field{margin-bottom:12px}
