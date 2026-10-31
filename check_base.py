@@ -1,7 +1,0 @@
-with open('fbm/templates/base.html') as f: s=f.read()
-print('chat-widget:', 'id="chat-widget"' in s)
-print('chat-restore:', 'id="chat-restore"' in s)
-print('legal-banner:', 'id="legal-banner"' in s)
-print('minimize btn (−):', '−' in s)
-print('menu btn (☰):', '☰' in s)
-print('collapsed rule:', '.sidebar-collapsed' in s)
