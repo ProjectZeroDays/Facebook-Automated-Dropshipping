@@ -364,6 +364,7 @@ def admin_login_post():
 
 @bp.get("/admin/dashboard")
 def admin_dashboard():
+    from fbm import auth
     if session.get("admin") != "admin" and not auth.verify_admin(session.get("admin"), ""):
         return redirect(url_for("pages.admin_login"))
     return render_template("admin/dashboard.html")
