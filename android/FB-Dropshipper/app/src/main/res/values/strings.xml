@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FB Dropshipper</string>
+    <string name="dashboard_url">http://localhost:8080/</string>
+    <string name="disclaimer_text">
+        PROPRIETARY RESTRICTED LICENSE — AUTHORIZED USE ONLY.
+        This software is proprietary to Authenticated, Inc. (Trey A. Smith).
+        UNAUTHORIZED USE, REDISTRIBUTION, EDITING, OR MODIFICATION IS PROHIBITED.
+        No copying without permission. Use does not guarantee Facebook Marketplace compliance.
+        All rights reserved. By proceeding you acknowledge these restrictions.
+    </string>
+</resources>
