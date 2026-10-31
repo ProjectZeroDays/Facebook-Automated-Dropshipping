@@ -1,0 +1,11 @@
+{
+  "from_role": "PA",
+  "to_role": "ARCH",
+  "state": "READY",
+  "deliverable_contract": {
+    "input": "project_requirements.md, GOAL.md, test_expanded.py",
+    "output": ".opencode/artifacts/ARCH/architecture_plan.md + component_diagram.svg + tech_stack.md",
+    "verification": "ARCH artifacts verified by LEAD before FE/BE/DEVOPS start",
+    "status": "HANDOFF_PENDING"
+  }
+}
