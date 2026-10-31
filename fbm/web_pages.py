@@ -368,6 +368,17 @@ def admin_dashboard():
         return redirect(url_for("pages.admin_login"))
     return render_template("admin/dashboard.html")
 
+@bp.get("/trial")
+def trial_view():
+    return render_template("trial.html")
+
+@bp.post("/trial")
+def trial_post():
+    from fbm import billing
+    tenant_id = session.get("tenant_id") or "default"
+    res = billing.start_trial(tenant_id)
+    return jsonify(res)
+
 @bp.get("/setup")
 def setup_wizard():
     """First-run setup wizard page."""
