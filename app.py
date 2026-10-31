@@ -96,11 +96,17 @@ def workflow_run():
 
 @app.route("/chat/search")
 def chat_search():
-    return jsonify({"results": chatbot.search(request.args.get("q", ""))})
+    q = request.args.get("q", "").strip()
+    if not q:
+        return jsonify({"results": []})
+    from fbm.auth import _q
+    rows = _q("SELECT role,text,created_at FROM chat_messages WHERE session_id=? AND text LIKE ? ORDER BY id",
+              (session.get("chat_session", ""), f"%{q}%"))
+    return jsonify({"results": [{"role": r[0], "text": r[1], "ts": r[2]} for r in rows]})
 
 @app.route("/chat/history")
 def chat_history():
-    from fbm.chatbot import _q
+    from fbm.auth import _q
     rows = _q("SELECT role,text,created_at FROM chat_messages WHERE session_id=? ORDER BY id",
               (session.get("chat_session", ""),))
     return jsonify({"messages": [dict(r) for r in rows]})
