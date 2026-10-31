@@ -54,6 +54,15 @@ FEATURES = [
 
 @bp.get("/")
 def index():
+    from fbm import auth, core
+    try:
+        core.init_db()
+        with core.db() as c:
+            row = c.execute("SELECT id FROM admins LIMIT 1").fetchone()
+            if not row:
+                return redirect(url_for("pages.setup_wizard"))
+    except Exception:
+        pass
     return render_template("index.html", plans=PLANS, features=FEATURES,
                            year=time.gmtime().tm_year)
 

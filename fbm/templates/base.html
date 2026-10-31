@@ -40,6 +40,9 @@ input,select,textarea{
 ul,ol{list-style:none}
 
 /* ---------- Layout shell ---------- */
+.shell.sidebar-collapsed .sidebar{
+  width:0; overflow:hidden; border-right-color:transparent;
+}
 .shell{
   display:flex;
   height:100vh;
@@ -47,6 +50,11 @@ ul,ol{list-style:none}
 }
 
 /* ---------- Sidebar ---------- */
+.sidebar.collapsed{
+  width:0;
+  overflow:hidden;
+  border-right-color:transparent;
+}
 .sidebar{
   width:252px;
   background:var(--panel);
@@ -543,8 +551,10 @@ ul,ol{list-style:none}
   <!-- Main -->
   <main class="main">
     <header class="topbar">
+      <button onclick="document.querySelector('.shell').classList.toggle('sidebar-collapsed'); document.querySelector('.sidebar').classList.toggle('collapsed')" aria-label="Toggle menu" style="font-size:18px;padding:6px 10px;border-radius:var(--r);background:var(--chip);cursor:pointer">☰</button>
       <div class="brand">FBM <b>{% block title_short %}Ops{% endblock %}</b></div>
       <div class="sp"></div>
+      <button onclick="document.getElementById('chat-panel').style.display='none'; this.style.display='none'" aria-label="Minimize chat" style="font-size:13px;padding:4px 8px;border-radius:6px;background:var(--chip);cursor:pointer">−</button>
       <div class="user">
         <div class="avatar">{{ user_initials }}</div>
         <div>
