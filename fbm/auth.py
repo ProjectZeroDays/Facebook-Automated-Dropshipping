@@ -2,7 +2,7 @@
 fbm/auth.py — passkeys, passwords, resets, step-up, audit.
 """
 from __future__ import annotations
-import base64, hashlib, hmac, json, os, secrets, time, uuid
+import os, base64, hashlib, hmac, json, os, secrets, time, uuid
 from datetime import datetime, timedelta
 from fbm import core as C
 from fbm import vault
@@ -36,6 +36,24 @@ def set_password(user_id, pw):
 def has_password(user_id):
     return bool(_q("SELECT password_hash FROM users WHERE id=?", (user_id,))[0]["password_hash"])
 
+
+def create_admin(user_id: str = "admin", pw: str = None) -> bool:
+    from fbm import core as C
+    pw = pw or os.getenv("ADMIN_PASSWORD", "admin-change-me-immediately")
+    with C.db() as c:
+        row = c.execute("SELECT id FROM admins WHERE id=?", (user_id,)).fetchone()
+        if not row:
+            c.execute("INSERT INTO admins(id, pw_hash) VALUES (?, ?)", (user_id, hash_password(pw)))
+            return True
+    return False
+
+def verify_admin(user_id: str, pw: str) -> bool:
+    from fbm import core as C
+    with C.db() as c:
+        row = c.execute("SELECT pw_hash FROM admins WHERE id=?", (user_id,)).fetchone()
+        if row:
+            return verify_password(pw, row[0])
+    return False
 
 def _q(sql, args=()):
     with C.db() as c:

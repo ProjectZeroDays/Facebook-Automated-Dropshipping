@@ -10,7 +10,7 @@ function createWindow() {
     defaultId: 0
   }).then(() => {
     const win = new BrowserWindow({ width: 1200, height: 800, webPreferences: { nodeIntegration: false } });
-    win.loadURL('http://localhost:8080/');
+    win.loadURL('http://localhost:5000/');
   });
 }
 

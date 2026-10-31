@@ -15,7 +15,7 @@ def main():
         "By clicking OK you acknowledge these restrictions."
     )
     if result == "ok":
-        url = os.getenv("DASH_URL", "http://localhost:8080/")
+        url = os.getenv("DASH_URL", "http://localhost:5000/")
         webbrowser.open(url)
     root.destroy()
 

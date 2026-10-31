@@ -335,12 +335,38 @@ def admin_tenant(tenant_id):
 # Setup Wizard Routes
 # ============================================================================
 
+@bp.get("/admin/login")
+def admin_login():
+    return render_template("auth/login.html", admin_mode=True, form={}, error=None)
+
+@bp.post("/admin/login")
+def admin_login_post():
+    from fbm import auth
+    uid = (request.form.get("username") or "").strip()
+    pw = request.form.get("password") or ""
+    if not uid or not pw:
+        return render_template("auth/login.html", admin_mode=True,
+                               form=request.form, error="Both fields required."), 400
+    if auth.verify_admin(uid, pw):
+        session["admin"] = uid
+        return redirect(url_for("pages.admin_dashboard"))
+    return render_template("auth/login.html", admin_mode=True,
+                           form=request.form, error="Invalid admin credentials."), 401
+
+@bp.get("/admin/dashboard")
+def admin_dashboard():
+    if session.get("admin") != "admin" and not auth.verify_admin(session.get("admin"), ""):
+        return redirect(url_for("pages.admin_login"))
+    return render_template("admin/dashboard.html")
+
 @bp.get("/setup")
 def setup_wizard():
     """First-run setup wizard page."""
     from fbm.setup import is_first_run
+    from fbm import auth
     if not is_first_run():
         return redirect(url_for("pages.index"))
+    auth.create_admin("admin")
     return render_template("setup/wizard.html")
 
 

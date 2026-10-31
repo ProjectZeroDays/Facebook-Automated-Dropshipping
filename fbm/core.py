@@ -412,6 +412,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT, tenant_id TEXT,
             order_fp TEXT, amount REAL, fee REAL, period TEXT,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+        CREATE TABLE IF NOT EXISTS admins(
+            id TEXT PRIMARY KEY, pw_hash TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
         CREATE TABLE IF NOT EXISTS webhook_events(
             event_id TEXT PRIMARY KEY, event_type TEXT, processed_at TEXT DEFAULT CURRENT_TIMESTAMP);
         CREATE TABLE IF NOT EXISTS processed_events(
