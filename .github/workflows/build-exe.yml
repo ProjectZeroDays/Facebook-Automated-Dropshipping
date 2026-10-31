@@ -1,0 +1,24 @@
+name: build-standalone-exe
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build standalone .exe
+        run: powershell -ExecutionPolicy Bypass -File build_exe.ps1
+      - name: Upload release asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: fbm-ops-standalone-windows
+          path: dist/*.exe
