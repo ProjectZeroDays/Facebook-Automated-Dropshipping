@@ -576,17 +576,17 @@ ul,ol{list-style:none}
 
 {% include "_chat.html" %}
 {% block scripts %}{% endblock %}
-  <aside id="chat-widget" style="position:fixed;right:18px;bottom:90px;width:320px;height:420px;background:linear-gradient(160deg,var(--panel),#14182b);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh-3);display:flex;flex-direction:column;z-index:55;transition:transform .3s ease;transform:translateX(0);">
+  <aside id="chat-widget" style="position:fixed;right:18px;bottom:90px;width:340px;height:440px;background:linear-gradient(180deg,var(--panel),#12142a);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.05);display:flex;flex-direction:column;z-index:55;transition:transform .3s ease,opacity .3s ease;transform:translateX(0);opacity:1;">
     <header style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;color:var(--fg);">
       <span>Chat <span style="color:var(--muted);font-weight:400">— AI Assistant</span></span>
-      <button onclick="document.getElementById('chat-widget').style.transform='translateX(120%)'; document.getElementById('chat-restore').style.display='inline-block'" aria-label="Minimize" style="font-size:12px;padding:2px 6px;border-radius:6px;background:var(--chip);cursor:pointer;border:none;color:var(--fg);">−</button>
+      <button onclick="document.getElementById('chat-widget').style.transform='translateX(120%)'; document.getElementById('chat-widget').style.opacity='0'; document.getElementById('chat-restore').style.display='inline-block'" aria-label="Minimize chat" style="font-size:13px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);cursor:pointer;border:1px solid rgba(255,255,255,.12);color:var(--fg);font-weight:600;">Minimize</button>
     </header>
     <div style="flex:1;padding:12px;overflow-y:auto;font-size:13px;color:var(--muted);">
       <p style="margin:0 0 6px">Restricted-use AI assistant. All interactions are logged.</p>
       <p style="margin:0">Use requires authorization. See LICENSE.</p>
     </div>
   </aside>
-  <button id="chat-restore" onclick="document.getElementById('chat-widget').style.transform='translateX(0)'; this.style.display='none'" style="position:fixed;right:18px;bottom:60px;display:none;z-index:55;padding:6px 10px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:16px;cursor:pointer;box-shadow:var(--sh-2);" aria-label="Restore chat">💬</button>
+  <button id="chat-restore" onclick="document.getElementById('chat-widget').style.transform='translateX(0)'; document.getElementById('chat-widget').style.opacity='1'; this.style.display='none'" style="position:fixed;right:18px;bottom:60px;display:none;z-index:55;padding:10px 14px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:16px;cursor:pointer;box-shadow:var(--sh-3);font-weight:700;width:48px;height:48px;align-items:center;justify-content:center;" aria-label="Restore chat">💬</button>
 
   <div id="legal-banner" style="position:fixed;top:0;left:0;right:0;z-index:100;background:#1a1f2e;border-bottom:2px solid var(--bad);padding:10px 18px;font-size:12px;color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;">
     <b style="color:var(--bad)">RESTRICTED — AUTHORIZED USE ONLY.</b>

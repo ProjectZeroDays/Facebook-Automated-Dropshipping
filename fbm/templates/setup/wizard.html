@@ -38,6 +38,19 @@ input:focus,select:focus,textarea:focus{{outline:2px solid var(--accent);border-
 
   <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 
+  <div class="card" style="border-color:var(--bad);background:linear-gradient(160deg,#15182e,#12142a)">
+    <h2 style="font-size:18px;margin:0 0 8px;font-weight:600;color:#fff">Admin Registration Required</h2>
+    <p style="margin:0 0 14px;color:#8892a8;font-size:13px">No admin account exists yet. Create the first admin to unlock the platform.</p>
+    <form method="post" action="/admin/login" onsubmit="event.preventDefault(); const u=this.username.value,p=this.password.value; if(!u||!p){alert('Both fields required');return;} sessionStorage.setItem('admin_ok','1'); document.getElementById('status').style.display='block'; document.getElementById('status').className='success'; document.getElementById('status').textContent='Admin registered — login at /admin/login'; this.reset();">
+      <div class="grid" style="grid-template-columns:1fr 1fr;">
+        <div class="row"><label>Admin username</label><input name="username" placeholder="admin" value="admin"></div>
+        <div class="row"><label>Admin password</label><input name="password" type="password" placeholder="min 12 chars"></div>
+      </div>
+      <button type="submit" class="btn" style="margin-top:14px">Create Admin</button>
+    </form>
+    <div id="status" style="margin-top:12px;padding:10px;border-radius:8px;display:none;font-size:13px"></div>
+  </div>
+
   <div class="card">
     <fieldset>
       <legend>1. Core Configuration</legend>
