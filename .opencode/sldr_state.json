@@ -1,0 +1,16 @@
+{
+  "session": "FB Dropshipper v1.2.0",
+  "state": "SWARM_ACTIVE",
+  "pipeline_order": ["PA", "ARCH", "LEAD", "FE", "BE", "DEVOPS", "QA", "RELEASE"],
+  "artifacts_dir": ".opencode/artifacts/",
+  "handoffs_dir": ".opencode/handoffs/",
+  "state_file": ".opencode/sldr_state.json",
+  "verification_gate": true,
+  "auto": true,
+  "never_ask": true,
+  "release_tag": "v1.2.0",
+  "tests_pass": "7/7 expanded + 4/4 comprehensive",
+  "skills_count": 700,
+  "sldr_skill_installed": true,
+  "repo": "https://github.com/ProjectZeroDays/Facebook-Automated-Dropshipping"
+}
