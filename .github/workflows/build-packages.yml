@@ -1,0 +1,27 @@
+name: build-all-packages
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Build .deb
+        run: bash scripts/build-deb.sh
+      - name: Build .snap (snapcraft may fail without daemon — allowed)
+        run: bash scripts/build-snap.sh || true
+      - name: Build .flatpak
+        run: bash scripts/build-flatpak.sh || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fbm-ops-packages-v${{ github.ref_name }}
+          path: |
+            dist/*.deb
+            dist/*.dmg
+            snap/*.snap
+            ios-wrapper/
